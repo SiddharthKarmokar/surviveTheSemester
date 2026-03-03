@@ -1,0 +1,39 @@
+#features{
+    height: 100vh;
+    width: 100vw;
+    font-size: 8rem;
+    font-weight: bold;
+    display: flex;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+#feature-heading{
+    color: white;
+    font-family: 'font4';
+    text-align: center;
+    padding: 20px;
+}
+
+#feature-cards{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+#card-1{
+    height: 300px;
+    width: 300px;
+    background-color: white;
+    border-radius: 20px;
+}
+
+#card-2{
+    height: 300px;
+    width: 300px;
+    background-color: white;
+    border-radius: 20px;
+}

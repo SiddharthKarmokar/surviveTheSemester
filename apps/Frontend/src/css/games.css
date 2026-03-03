@@ -1,0 +1,38 @@
+#games-list{
+    background-color: black;
+    color: white;
+    height: 100vh;
+    width: 100vw;
+}
+
+#games-heading{
+    font-size: 4rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    font-family: 'font1';
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+
+.game-item{
+    font-size: 2rem;
+    padding: 2px 0;
+    display: flex;
+    gap: 40px;
+    cursor: pointer;
+}
+
+.game-item:hover{
+    background-color: rgb(27, 23, 23);
+}
+
+#item-number{
+    font-family: 'font2';
+    margin-left: 80px;
+}
+
+#item-number, #game-name {
+    padding: 10px 2px;
+}

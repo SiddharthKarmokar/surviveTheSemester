@@ -1,0 +1,105 @@
+#prizes {
+    background-color: #C74FFF;
+    color: #4C0070;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+}
+
+.prizes-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1400px;
+    height: 100%;
+    position: relative;
+    padding: 0 5%;
+}
+
+#prizes-text {
+    font-size: 7vw;
+    font-weight: bold;
+    text-align: center;
+    font-family: 'font4', "Segoe UI", sans-serif;
+    line-height: 0.9;
+    flex: 1;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.kingdoms-text {
+    position: relative;
+    display: inline-block;
+}
+
+.small-dice-container {
+    position: absolute;
+    width: 250px;
+    height: 250px; /*1:1 aspect ratio in Three.js */
+    top: -1%;
+    right: -100px;
+    transform: translateY(-50%);
+    z-index: 6;
+    pointer-events: none;
+}
+
+.prize-card {
+    position: relative;
+    width: 200px; 
+    height: 250px; 
+    overflow: visible;
+    z-index: 10;
+    transform-style: preserve-3d;
+    transform: perspective(500px);
+}
+
+.prize-card.left-card {
+    position: absolute;
+    left: 5%;
+    top: -5vh;
+}
+
+.prize-card.right-card {
+    position: absolute;
+    right: 5%;
+    top: -15vh;
+}
+
+.prize-card .card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    pointer-events: none;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.prize-card .canvas-container {
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    z-index: 2;
+    pointer-events: none;
+    transform: translateZ(50px); 
+}
+
+
+@media (max-width: 1200px) {
+    #prizes-text { font-size: 6rem; }
+    .prize-card { width: 220px; height: 320px; }
+}
+@media (max-width: 900px) {
+    .prizes-content { flex-direction: column; justify-content: center; gap: 50px; }
+    #prizes-text { font-size: 4rem; order: -1; margin-bottom: 20px; }
+    .prize-card.left-card, .prize-card.right-card { margin: 0; }
+}
