@@ -1,0 +1,157 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face{
+    font-family: "font1";
+    src: url("../assests/fonts/font1.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face{
+    font-family: "font2";
+    src: url("../assests/fonts/font2.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face{
+    font-family: "font3";
+    src: url("../assests/fonts/font3.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face{
+    font-family: "font4";
+    src: url("../assests/fonts/font4.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    padding: 10px 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+#title p{
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    font-family: "font1", "Segoe UI", Arial, sans-serif;
+}
+
+#buttons{
+    display: flex;
+    gap: 10px;
+}
+
+#buttons button{
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "font1", "Segoe UI", Arial, sans-serif;
+}
+
+.nav-btn{
+    position: relative;
+    z-index: 1;
+    padding: 8px 15px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #0b0b0b;
+    overflow: hidden;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-btn *{
+    background-color: inherit;
+}
+
+.nav-btn--alt{
+    background-color: #ffffff;
+}
+
+.nav-btn:hover{
+    transform: translateY(-1px);
+    background-color: #A1FF4F;
+}
+
+.btn-text{
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    height: 1em;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: "font1", "Segoe UI", Arial, sans-serif;
+    line-height: 1.2em;
+    background-color: inherit;
+    color: #0b0b0b;
+    padding: 0;
+}
+
+.btn-text-line{
+    display: block;
+    transition: transform 0.5s ease;
+    line-height: 1.2em;
+    color: #0b0b0b;
+    background-color: inherit;
+    will-change: transform;
+}
+
+.btn-text-line:last-child{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    transform: translateY(120%);
+}
+
+.nav-btn:hover .btn-text-line:first-child{
+    transform: translateY(-120%);
+}
+
+.nav-btn:hover .btn-text-line:last-child{
+    transform: translateY(0);
+}
+
+.btn-text-line svg{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-left: 0.5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+}
+
+.btn-text-line svg path{
+    fill: #0b0b0b;
+}
+
+.nav-btn:hover .btn-text-line svg{
+    transform: rotate(45deg);
+}
+
+.nav-btn:hover .btn-text-line svg path{
+    fill: #0b0b0b;
+}
+
