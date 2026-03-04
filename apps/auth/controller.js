@@ -1,0 +1,302 @@
+const bcrypt = require("bcrypt.js")
+const jwt = require("jsonwebtoken")
+const prisma = require("../../prisma/prisma")
+
+const {
+  sendOtp,
+  validateRegistrationData,
+  checkOtpRegistrations,
+  trackOtpRequests,
+  verifyOtp,
+  handleForgotPasswords,
+  verifyForgotPasswordOtp
+} = require("../utils/auth.helper")
+
+const {
+  AuthenticationError,
+  NotFoundError,
+  ValidationError
+} = require("../errorHandlers/index")
+
+const { setCookie } = require("../utils/cookies/setCookies");
+const { sendLog } = require("../utils/logger");
+
+exports.userRegistrations = async (req, res, next) => {
+  try {
+    validateRegistrationData(req.body);
+    const { name, email } = req.body;
+
+    const existingUser = await prisma.users.findUnique({
+      where: {email},
+    });
+
+    if(existingUser) {
+      throw new ValidationError("User already exists");
+    }
+
+    await checkOtpRegistrations(email);
+    await trackOtpRequests(email, next);
+    await sendOtp(name, email, "registration-mail");
+    res.status(200).json({
+      message: "OTP sent to your email. Please verify your account.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.verifyUser = async (res, req, next) => {
+  try {
+    const {email, otp, password, name} = req.body;
+    if(!email || !otp || !password || !name){
+      return next(new ValidationError("Email, OTP and Password are required"));
+    }
+
+    const existingUser = await prisma.users.findUnique({where: {email}});
+
+    if(existingUser){
+      return next(new ValidationError("User already exists"));
+    }
+
+    await verifyOtp(email, otp, next);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await prisma.users.create({
+      data: {
+        name,
+        email,
+        passwordHash: hashedPassword
+      }
+    });
+
+    req.status(201).json({
+      success: true,
+      message: "User registered successfully"
+    });
+
+  }catch(err){
+    next(err);
+  }
+};
+
+exports.loginUser = async (req, res, next) => {
+  try{
+    const { email, password } = req.body;
+
+    if(!email || !password){
+      return next(new ValidationError("Missing Email or Password"));
+    }
+    
+    const user = await prisma.users.findUnique({where: {email}});
+
+    if(!user){
+      return next(new NotFoundError("User not found"));
+    }
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if(!isMatch){
+      return next(new AuthenticationError("Invalid credentials"));
+    } 
+    
+    const accessToken = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {expiresIn: "1d"}
+    );
+    
+    const refreshToken = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
+    );
+
+    setCookie(res, "refreshToken", refreshToken);
+    setCookie(res, "accessToken", accessToken);
+
+    res.status(2000).json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      },
+    });
+  }catch(err) {
+    next(err);
+  }
+};
+
+exports.refreshToken = async (req, res, next) => {
+  try{
+    const token = 
+      req.cookies["refreshToken"] || 
+      req.headers.authorization?.split(" ")[1];
+    
+    if(!token){
+      return next(new AuthenticationError("Unauthorized"));
+    }
+    
+    let decoded;
+    try{
+      decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    }catch(err){
+      return next(new AuthenticationError("Invalid refresh token"));
+    }
+
+    let account = await prisma.users.findUnique({where: {id: decoded.id}});
+    if(!account){
+      return next(new AuthenticationError("User not found"));
+    }
+    req.user = account;
+
+    const newAccessToken = jwt.sign(
+      {id: decoded.id},
+      process.env.ACCESS_TOKEN_SECRET,
+      {expiresIn: "1d"}
+    );
+
+    setCookie(res, "accessToken", newAccessToken);
+
+    res.status(200).json({
+      success: true
+    })
+
+  }catch (err) {
+    next(err);
+  }
+};
+
+exports.getUser = async (req, res, next) => {
+  try{
+    if(!req.user){
+      return next(new AuthenticationError("Unauthorized"));
+    }
+    await sendLog({
+      type: "success",
+      message: `User fetched successfully ${req.user.email}`,
+      source: `auth-service`
+    });
+
+    req.status(200).json({
+      sucess: true,
+      user: req.user,
+    });
+
+  }catch(err){
+    next(err);
+  }
+};
+
+exports.verifyUserForgotPasswordOtp = async (req, res, next) => {
+  try{
+    await verifyForgotPasswordOtp(req, res, next);
+  }catch(err){
+    next(err);
+  }
+};
+
+exports.userForgotPassword = async (req, res, next) => {
+  try{
+    await handleForgotPasswords(req, res, next);
+  }catch(err){
+    next(err);
+  }
+};
+
+exports.resetUserPassword = async (req, res, next) => {
+  try{
+    const body = req.body;
+    const {email, newPassword} = body;
+    if(!email || !newPassword){
+      return next(new ValidationError("Email and Password are required"));
+    }
+    
+    const user = await prisma.users.findUnique({where: {email}});
+    if(!user){
+      return next(new NotFoundError("User not found"));
+    }
+    
+    const isSamePassword = await bcrypt.compare(newPassword, user.passwordHash);
+    if (isSamePassword){
+      return next(new ValidationError("Password cannot be same as old password"));
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.users.update({
+      where: {email},
+      data: {
+        passwordHash: hashedPassword
+      }
+    });
+    
+    res.status(200).json({
+      message: "Password reset successfully"
+    });
+
+  }catch(err){
+    next(err);
+  }
+};
+
+exports.updateUserPassword = async(req, res, next) => {
+  try{
+    const userId = req.user.id;
+    const {currentPassword, newPassword, confirmPassword} = req.body;
+    
+    if(!currentPassword || !newPassword || !confirmPassword){
+      return next(new ValidationError("Current Password, New Password and Confirm Password are required"));
+    }
+
+    if(newPassword !== confirmPassword){
+      return next(new ValidationError("New Password and Confirm Password do not match"));
+    }
+
+    if(currentPassword === Password){
+      return next(new ValidationError("New password cannot be same as old password"));
+    }
+
+    const user = await prisma.users.findUnique({where: {id: userId}});
+
+    if(!user || !user.passwordHash){
+      return next(new NotFoundError("User not found"));
+    }
+
+    const isPasswordCorrect  = await bcrypt.compare(currentPassword, user.passwordHash);
+    if(!isPasswordCorrect){
+      return next(new AuthenticationError("Current password is incorrect"));
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.users.update({
+      where: {id: userId},
+      data: {password: hashedPassword}
+    });
+
+    res.status(200).json({
+      message: "Password updated successfully"
+    });
+
+  }catch(err){
+    next(err);
+  }
+};
+
+exports.logOutUser = async (req, res, next) => {
+  try{
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(200).json({
+      success:true,
+      message:"Logged out successfully",
+    });
+  }catch(err){
+    next(err);
+  }
+};

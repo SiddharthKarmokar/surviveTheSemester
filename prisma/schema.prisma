@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL", "mongodb://localhost:27017/myapp")
+}
+
+model images {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  file_id String
+  url     String[]
+
+  // User avatar (one-to-one)
+  userAvatarOf users[] @relation("UserAvatar")
+
+  // User gallery (one-to-many)
+  user   users?  @relation("UserImages", fields: [userId], references: [id])
+  userId String? @db.ObjectId
+}
+
+model users {
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  email            String        @unique
+  passwordHash     String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  friendlist       String[]
+  rating           Int
+  HighScore        Int[]
+  streak           Int
+  maxStreak        Int
+  interest         String[]
+
+  avatar images? @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  avatarId String?  @db.ObjectId
+
+  images images[] @relation("UserImages")
+}
