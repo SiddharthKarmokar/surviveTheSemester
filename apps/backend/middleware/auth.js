@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken");
-const prisma = require("../prisma/prisma");
+import jwt from "jsonwebtoken";
+import { prisma } from "../prisma/prisma.js";
 
-exports.isAuthenticated = async (req, res, next) => {
+export const isAuthenticated = async (req, res, next) => {
     try{
         const token = 
             req.cookies?.accessToken ||

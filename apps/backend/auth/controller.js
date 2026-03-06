@@ -1,8 +1,8 @@
-const bcrypt = require("bcrypt.js")
-const jwt = require("jsonwebtoken")
-const prisma = require("../../prisma/prisma")
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { prisma } from "../prisma/prisma.js";
 
-const {
+import {
   sendOtp,
   validateRegistrationData,
   checkOtpRegistrations,
@@ -10,18 +10,18 @@ const {
   verifyOtp,
   handleForgotPasswords,
   verifyForgotPasswordOtp
-} = require("../utils/auth.helper")
+} from "../utils/auth.helper.js";
 
-const {
+import {
   AuthenticationError,
   NotFoundError,
   ValidationError
-} = require("../errorHandlers/index")
+} from "../errorHandlers/index.js";
 
-const { setCookie } = require("../utils/cookies/setCookies");
-const { sendLog } = require("../utils/logger");
+import { setCookie } from "../utils/cookies/setCookies.js";
+import { sendLog } from "../utils/logger.js";
 
-exports.userRegistrations = async (req, res, next) => {
+export const userRegistrations = async (req, res, next) => {
   try {
     validateRegistrationData(req.body);
     const { name, email } = req.body;
@@ -36,7 +36,7 @@ exports.userRegistrations = async (req, res, next) => {
 
     await checkOtpRegistrations(email);
     await trackOtpRequests(email, next);
-    await sendOtp(name, email, "registration-mail");
+    await sendOtp(name, email, "user-activation-mail");
     res.status(200).json({
       message: "OTP sent to your email. Please verify your account.",
     });
@@ -45,7 +45,7 @@ exports.userRegistrations = async (req, res, next) => {
   }
 };
 
-exports.verifyUser = async (res, req, next) => {
+export const verifyUser = async (req, res, next) => {
   try {
     const {email, otp, password, name} = req.body;
     if(!email || !otp || !password || !name){
@@ -65,11 +65,17 @@ exports.verifyUser = async (res, req, next) => {
       data: {
         name,
         email,
-        passwordHash: hashedPassword
+        passwordHash: hashedPassword,
+        friendlist: [],
+        rating: 0,
+        HighScore: [],
+        streak: 0,
+        maxStreak: 0,
+        interest: []  
       }
     });
 
-    req.status(201).json({
+    res.status(201).json({
       success: true,
       message: "User registered successfully"
     });
@@ -79,7 +85,7 @@ exports.verifyUser = async (res, req, next) => {
   }
 };
 
-exports.loginUser = async (req, res, next) => {
+export const loginUser = async (req, res, next) => {
   try{
     const { email, password } = req.body;
 
@@ -132,7 +138,7 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-exports.refreshToken = async (req, res, next) => {
+export const refreshToken = async (req, res, next) => {
   try{
     const token = 
       req.cookies["refreshToken"] || 
@@ -172,7 +178,7 @@ exports.refreshToken = async (req, res, next) => {
   }
 };
 
-exports.getUser = async (req, res, next) => {
+export const getUser = async (req, res, next) => {
   try{
     if(!req.user){
       return next(new AuthenticationError("Unauthorized"));
@@ -193,7 +199,9 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
-exports.verifyUserForgotPasswordOtp = async (req, res, next) => {
+
+
+export const verifyUserForgotPasswordOtp = async (req, res, next) => {
   try{
     await verifyForgotPasswordOtp(req, res, next);
   }catch(err){
@@ -201,7 +209,7 @@ exports.verifyUserForgotPasswordOtp = async (req, res, next) => {
   }
 };
 
-exports.userForgotPassword = async (req, res, next) => {
+export const userForgotPassword = async (req, res, next) => {
   try{
     await handleForgotPasswords(req, res, next);
   }catch(err){
@@ -209,7 +217,7 @@ exports.userForgotPassword = async (req, res, next) => {
   }
 };
 
-exports.resetUserPassword = async (req, res, next) => {
+export const resetUserPassword = async (req, res, next) => {
   try{
     const body = req.body;
     const {email, newPassword} = body;
@@ -244,7 +252,7 @@ exports.resetUserPassword = async (req, res, next) => {
   }
 };
 
-exports.updateUserPassword = async(req, res, next) => {
+export const updateUserPassword = async(req, res, next) => {
   try{
     const userId = req.user.id;
     const {currentPassword, newPassword, confirmPassword} = req.body;
@@ -287,7 +295,7 @@ exports.updateUserPassword = async(req, res, next) => {
   }
 };
 
-exports.logOutUser = async (req, res, next) => {
+export const logOutUser = async (req, res, next) => {
   try{
 
     res.clearCookie("accessToken");

@@ -5,19 +5,32 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "@prisma/config": "^7.4.2",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
+    "ejs": "^5.0.1",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "kafka-node": "^5.0.0",
+    "kafkajs": "^2.2.4",
     "morgan": "^1.10.1",
-    "prisma": "^7.4.2",
+    "nodemailer": "^8.0.1",
     "redis": "^5.11.0",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.2"
   }
 }

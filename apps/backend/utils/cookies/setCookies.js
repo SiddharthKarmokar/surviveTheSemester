@@ -1,4 +1,4 @@
-exports.setCookie = (res, name, value) => {
+export const setCookie = (res, name, value) => {
     res.cookie(name, value, {
         httpOnly: true,
         secure: true,

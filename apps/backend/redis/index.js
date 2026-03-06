@@ -1,5 +1,5 @@
-const { createClient } = require("redis");
-const { RedisError } = require("../errorHandlers");
+import { createClient } from "redis";
+import {RedisError} from "../errorHandlers/index.js";
 
 let redisClient;
 
@@ -72,7 +72,7 @@ const disconnectRedis = async () => {
 process.on("SIGINT", disconnectRedis);
 process.on("SIGTERM", disconnectRedis);
 
-module.exports = {
+export {
   connectRedis,
   createRedisClient,
 };

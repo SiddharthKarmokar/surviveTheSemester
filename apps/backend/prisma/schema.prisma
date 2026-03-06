@@ -1,10 +1,10 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model images {
@@ -29,21 +29,15 @@ model users {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  friendlist String[]
-  rating     Int
-  HighScore  Int[]
-  streak     Int
-  maxStreak  Int
-  interest   String[]
+  friendlist String[]   @default([])
+  rating     Int        @default(0)
+  HighScore  Int[]      @default([])
+  streak     Int        @default(0)
+  maxStreak  Int        @default(0)
+  interest   String[]   @default([])
 
-  avatarId String? @db.ObjectId
-  avatar   images? @relation(
-    "UserAvatar",
-    fields: [avatarId],
-    references: [id],
-    onDelete: NoAction,
-    onUpdate: NoAction
-  )
+  avatarId String? @unique @db.ObjectId
+  avatar images? @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   images images[] @relation("UserImages")
 }
