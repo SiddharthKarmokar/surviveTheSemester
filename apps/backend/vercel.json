@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "apps/backend/server.js": {
+      "includeFiles": "apps/backend/utils/email-templates/**"
+    }
+  }
+}
