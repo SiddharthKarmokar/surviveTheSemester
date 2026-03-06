@@ -5,8 +5,9 @@ import path from "path";
 import { __dirname } from "../index.js";
 
 const transporter = nodemailer.createTransport({
-    host:process.SMTP_HOST,
+    host:process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT) || 587,
+    secure: false,
     service: process.env.SMTP_SERVICE,
     auth:{
         user:process.env.SMTP_USER,
