@@ -156,10 +156,14 @@ export const handleForgotPasswords = async (req,res,next) => {
     await checkOtpRegistrations(email);
     await trackOtpRequests(email);
 
+    const version = req.query.v || "1";
+    const mailer = version == "2" ? sendGridMail : sendEmail;
+
     await sendOtp(
       user.name,
       email,
-      "forgot-password-mail"
+      "forgot-password-mail",
+      mailer  
     );
 
     res.status(200).json({

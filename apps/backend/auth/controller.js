@@ -116,7 +116,7 @@ export const loginUser = async (req, res, next) => {
         email: user.email
       },
       process.env.ACCESS_TOKEN_SECRET,
-      {expiresIn: "1d"}
+      {expiresIn: "3h"}
     );
     
     const refreshToken = jwt.sign(
@@ -124,13 +124,15 @@ export const loginUser = async (req, res, next) => {
         id: user.id,
         name: user.name,
         email: user.email
-      }
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {expiresIn: "1d"}
     );
 
     setCookie(res, "refreshToken", refreshToken);
     setCookie(res, "accessToken", accessToken);
 
-    res.status(2000).json({
+    res.status(200).json({
       message: "Login successful",
       user: {
         id: user.id,
@@ -188,15 +190,18 @@ export const getUser = async (req, res, next) => {
     if(!req.user){
       return next(new AuthenticationError("Unauthorized"));
     }
+    
+    const { passwordHash, ...safeUser } = req.user;
+    
     await sendLog({
       type: "success",
       message: `User fetched successfully ${req.user.email}`,
       source: `auth-service`
     });
 
-    req.status(200).json({
+    res.status(200).json({
       sucess: true,
-      user: req.user,
+      user: safeUser,
     });
 
   }catch(err){
@@ -270,7 +275,7 @@ export const updateUserPassword = async(req, res, next) => {
       return next(new ValidationError("New Password and Confirm Password do not match"));
     }
 
-    if(currentPassword === Password){
+    if(currentPassword === newPassword){
       return next(new ValidationError("New password cannot be same as old password"));
     }
 
@@ -288,7 +293,7 @@ export const updateUserPassword = async(req, res, next) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.users.update({
       where: {id: userId},
-      data: {password: hashedPassword}
+      data: {passwordHash: hashedPassword}
     });
 
     res.status(200).json({
@@ -303,8 +308,16 @@ export const updateUserPassword = async(req, res, next) => {
 export const logOutUser = async (req, res, next) => {
   try{
 
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict"
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict"
+    });
     res.status(200).json({
       success:true,
       message:"Logged out successfully",

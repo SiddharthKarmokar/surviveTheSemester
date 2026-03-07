@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import registerAllRoutes from "./routes/index.js";
 import { errorMiddleware } from "./middleware/error.js"; 
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 registerAllRoutes(app);
 
