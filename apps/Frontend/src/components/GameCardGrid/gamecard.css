@@ -1,0 +1,101 @@
+/* gamecard.css */
+.gamecard-container {
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard), background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.gamecard-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--md-sys-color-on-surface);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.gamecard-container:hover {
+    box-shadow: var(--md-sys-elevation-level2);
+}
+
+.gamecard-container:hover::before {
+    opacity: 0.08;
+}
+
+.gamecard-container:active::before {
+    opacity: 0.12;
+}
+
+.gamecard-lottie-wrapper {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1; /* Above state layer */
+}
+
+.gamecard-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-grow: 1;
+    z-index: 1;
+}
+
+.gamecard-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+    letter-spacing: 0.1px;
+    text-align: center;
+}
+
+.gamecard-action {
+    align-self: stretch;
+    padding: 0 16px;
+    height: 40px;
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline);
+    color: var(--md-sys-color-on-surface);
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.1px;
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gamecard-action::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--md-sys-color-on-surface);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.gamecard-action:hover::before {
+    opacity: 0.08;
+}
+
+.gamecard-action:active::before {
+    opacity: 0.12;
+}

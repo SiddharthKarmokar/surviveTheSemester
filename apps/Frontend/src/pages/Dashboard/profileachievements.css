@@ -1,0 +1,59 @@
+/* profileachievements.css */
+.profile-achievements-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.profile-achievements-list {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px; /* For scrollbar */
+}
+
+/* Custom weak scrollbar */
+.profile-achievements-list::-webkit-scrollbar {
+    height: 4px;
+}
+.profile-achievements-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.profile-achievements-list::-webkit-scrollbar-thumb {
+    background: var(--md-sys-color-outline-variant);
+    border-radius: 4px;
+}
+
+.profile-achievement-badge {
+    min-width: 80px;
+    height: 90px;
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    /* Mimic hexagon styling softly */
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background-color: var(--md-sys-color-surface-container);
+    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.profile-achievement-badge:hover {
+    transform: translateY(-4px);
+    border-color: var(--md-sys-color-primary);
+}
+
+.badge-icon {
+    font-size: 24px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.badge-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}

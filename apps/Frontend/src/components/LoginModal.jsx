@@ -1,13 +1,16 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import '../css/login-modal.css';
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
     const passwordInputRef = useRef(null);
     const emailInputRef = useRef(null);
     const faceRef = useRef(null);
     const leftHandRef = useRef(null);
     const rightHandRef = useRef(null);
     const tongueRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
     const hideHands = useCallback(() => {
         leftHandRef.current?.classList.add('hide');
@@ -129,7 +132,43 @@ const LoginModal = ({ isOpen, onClose }) => {
                 </div>
 
                 
-                <div className="login">
+                
+                <form className="login" onSubmit={async (e) => {
+                    e.preventDefault();
+                    const email = emailInputRef.current?.value;
+                    const password = passwordInputRef.current?.value;
+
+                    if (!email || !password) {
+                        setErrorMsg("Missing Email or Password");
+                        return;
+                    }
+
+                    setIsLoading(true);
+                    setErrorMsg('');
+
+                    try {
+                        const response = await fetch(`${API_URL}/auth/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password }),
+                            credentials: 'include'
+                        });
+                        
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            setErrorMsg(data.message || "Invalid credentials");
+                        } else {
+                            onClose();
+                            window.history.pushState({}, '', '/dashboard');
+                            window.dispatchEvent(new PopStateEvent('popstate'));
+                        }
+                    } catch (err) {
+                        setErrorMsg("Network error occurred.");
+                    } finally {
+                        setIsLoading(false);
+                    }
+                }}>
                     <label>
                         <svg className="field-icon" viewBox="0 0 24 24" width="15" height="15">
                             <path stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round"
@@ -158,16 +197,20 @@ const LoginModal = ({ isOpen, onClose }) => {
                         />
                     </label>
 
-                    <button className="login-button nav-btn">
+                        <div className="login-error" style={{color: '#ff6b6b', fontSize: '13px', textAlign: 'center', marginBottom: '10px', minHeight: '18px'}}>
+                            {errorMsg}
+                        </div>
+
+                    <button type="submit" className="login-button nav-btn" disabled={isLoading}>
                         <span className="btn-text">
-                            <span className="btn-text-line">LOGIN</span>
-                            <span className="btn-text-line">LOGIN</span>
+                            <span className="btn-text-line">{isLoading ? "LOGGING IN..." : "LOGIN"}</span>
+                            <span className="btn-text-line">{isLoading ? "LOGGING IN..." : "LOGIN"}</span>
                         </span>
                     </button>
-                </div>
+                </form>
 
                 <div className="footer">
-                    No account? <a href="#" className="footer-link">Register</a>
+                    No account? <span className="footer-link" style={{cursor: 'pointer'}} onClick={() => { onClose(); if(onSwitchToSignup) onSwitchToSignup(); }}>Register</span>
                 </div>
             </div>
         </div>

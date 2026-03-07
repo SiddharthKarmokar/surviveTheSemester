@@ -1,0 +1,52 @@
+/* ratingcard.css */
+.ratingcard-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 12px 16px;
+    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.ratingcard-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--md-sys-color-on-surface);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    pointer-events: none;
+}
+
+.ratingcard-container:hover::before {
+    opacity: 0.04;
+}
+
+.ratingcard-icon {
+    font-size: 20px;
+    color: var(--md-sys-color-primary);
+}
+
+.ratingcard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ratingcard-title {
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    letter-spacing: 0.4px;
+    font-weight: 500;
+}
+
+.ratingcard-score {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}

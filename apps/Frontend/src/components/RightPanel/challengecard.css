@@ -1,0 +1,85 @@
+/* challengecard.css */
+.challengecard-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 16px;
+    cursor: pointer;
+    transition: box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    position: relative;
+    overflow: hidden;
+}
+
+.challengecard-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--md-sys-color-on-surface);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.challengecard-container:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.challengecard-container:hover::before {
+    opacity: 0.08;
+}
+
+.challengecard-container:active::before {
+    opacity: 0.12;
+}
+
+.challengecard-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 1;
+}
+
+.challengecard-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+    letter-spacing: 0.1px;
+}
+
+.challengecard-status {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+}
+
+.status-completed {
+    color: var(--md-sys-color-primary); 
+}
+
+.status-pending {
+    color: var(--md-sys-color-outline);
+}
+
+.challengecard-action {
+    background: transparent;
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--md-sys-color-primary);
+    font-family: inherit;
+    padding: 8px 16px;
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    z-index: 1;
+}
+
+.challengecard-action:hover {
+    background-color: rgba(161, 255, 79, 0.08); /* Primary hover state layer */
+}
+
+.challengecard-action:active {
+    background-color: rgba(161, 255, 79, 0.12);
+}

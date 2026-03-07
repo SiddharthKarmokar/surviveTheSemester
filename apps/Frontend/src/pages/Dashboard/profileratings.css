@@ -1,0 +1,96 @@
+/* profileratings.css */
+.profile-ratings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.profile-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-section-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}
+
+.profile-section-forward {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--md-sys-shape-corner-small);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.profile-section-forward:hover {
+    background-color: rgba(161, 255, 79, 0.08); /* Primary hover state */
+}
+
+.profile-ratings-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.profile-rating-card {
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.profile-rating-card:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.profile-rating-icon {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-rating-score {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+    line-height: 1;
+}
+
+.profile-rating-label {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Specific icon colors based on screenshot */
+.icon-math { color: #FFA500; }
+.icon-classical { color: #ff6b6b; }
+.icon-memory { color: #00ced1; }
+.icon-puzzle { color: #9b59b6; }
+
+@media (max-width: 768px) {
+    .profile-ratings-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

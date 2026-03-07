@@ -1,0 +1,47 @@
+/* userratingcard.css */
+.user-rating-container {
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--md-sys-elevation-level1);
+    transition: box-shadow var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+    cursor: default;
+}
+
+.user-rating-container:hover {
+    box-shadow: var(--md-sys-elevation-level2);
+}
+
+.user-rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-rating-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-rating-score {
+    margin: 0;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+    line-height: 1;
+}
+
+.user-rating-label {
+    margin: 0;
+    font-size: 14px;
+    color: var(--md-sys-color-primary); /* Use primary for positive feedback */
+    font-weight: 500;
+}

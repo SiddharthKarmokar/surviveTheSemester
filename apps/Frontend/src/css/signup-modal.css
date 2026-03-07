@@ -11,8 +11,7 @@
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-
-.modal-backdrop {
+.signup-modal-backdrop {
     position: fixed;
     inset: 0;
     background-color: rgba(0,0,0,0.55);
@@ -25,11 +24,10 @@
     font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
 }
 
-
-.center {
+.signup-center {
     position: relative;
     display: inline-block;
-    width: 275px;
+    width: 320px;
     border-radius: 10px;
     overflow: hidden;
     background-color: #ffffff;
@@ -39,8 +37,7 @@
     padding-bottom: 24px;
 }
 
-
-.center .modal-close-btn {
+.signup-center .modal-close-btn {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -57,10 +54,9 @@
     justify-content: center;
     transition: all 0.2s;
 }
-.center .modal-close-btn:hover { rotate:180deg; background-color: #fff; }
+.signup-center .modal-close-btn:hover { rotate:180deg; background-color: #fff; }
 
-
-.center .ear {
+.signup-center .ear {
     position: absolute;
     top: -48px;
     width: 120px;
@@ -69,18 +65,16 @@
     background-color: #000;
     z-index: 0;
 }
-.center .ear--left  { left:  -55px; }
-.center .ear--right { right: -55px; }
+.signup-center .ear--left  { left:  -35px; }
+.signup-center .ear--right { right: -35px; }
 
-
-.center .face {
+.signup-center .face {
     position: absolute;
     top: 32px;
     left: 50%;
     transform: translateX(-50%) rotate(var(--rotate-head, 0deg));
     transform-origin: center 20px;
     transition: transform 0.2s ease;
-
     width: 190px;
     height: 150px;
     display: flex;
@@ -90,19 +84,19 @@
     z-index: 2;
 }
 
-.center .eyes {
+.signup-center .eyes {
     display: flex;
     align-items: center;
     gap: 38px;
 }
-.center .eye {
+.signup-center .eye {
     width: 26px;
     height: 26px;
     border-radius: 50%;
     background-color: #000;
     position: relative;
 }
-.center .eye .glow {
+.signup-center .eye .glow {
     position: absolute;
     top: 4px;
     right: -3px;
@@ -113,13 +107,12 @@
     transform: rotate(38deg);
 }
 
-
-.center .nose {
+.signup-center .nose {
     position: relative;
     top: 18px;
     line-height: 0;
 }
-.center .nose .glow {
+.signup-center .nose .glow {
     position: absolute;
     top: 4px;
     left: 30%;
@@ -129,20 +122,18 @@
     background-color: #555;
 }
 
-
-.center .mouth {
+.signup-center .mouth {
     position: relative;
     margin-top: 34px;
 }
-
-.center svg.smile {
+.signup-center svg.smile {
     position: absolute;
     left: -28px;
     top: -19px;
     transform: scaleX(1.1);
     stroke: #111;
 }
-.center .mouth-hole {
+.signup-center .mouth-hole {
     position: absolute;
     top: 0;
     left: -50%;
@@ -153,7 +144,7 @@
     background-color: #111;
     z-index: -1;
 }
-.center .tongue {
+.signup-center .tongue {
     position: relative;
     top: 5px;
     width: 30px;
@@ -162,10 +153,10 @@
     transform-origin: top;
     transform: rotateX(60deg);
 }
-.center .tongue.breath {
+.signup-center .tongue.breath {
     animation: breath 0.5s infinite linear;
 }
-.center .tongue-top {
+.signup-center .tongue-top {
     position: absolute;
     bottom: -15px;
     width: 30px;
@@ -173,14 +164,14 @@
     border-radius: 15px;
     background-color: #d0d0d0;
 }
-.center .line {
+.signup-center .line {
     position: absolute;
     top: 0;
     width: 30px;
     height: 5px;
     background-color: #bbb;
 }
-.center .median {
+.signup-center .median {
     position: absolute;
     top: 0;
     left: 50%;
@@ -191,8 +182,7 @@
     background-color: #bbb;
 }
 
-
-.center .hands {
+.signup-center .hands {
     position: absolute;
     top: 163px;
     left: 0;
@@ -200,29 +190,22 @@
     pointer-events: none;
     z-index: 5;
 }
-
-.center .hand {
+.signup-center .hand {
     position: absolute;
     display: flex;
     gap: -2; 
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.signup-center .hand--left  { left:  50px; }
+.signup-center .hand--right { right: 50px; }
 
-.center .hand--left  { left:  28px; }
-.center .hand--right { right: 28px; }
+.signup-center .hand--left.hide  { transform: translate(38px, -94px)  rotate(-160deg); }
+.signup-center .hand--right.hide { transform: translate(-38px, -94px) rotate(160deg);  }
+.signup-center .hand--left.peek  { transform: translate(38px, -60px)  rotate(-140deg); }
+.signup-center .hand--right.peek { transform: translate(-38px, -60px) rotate(140deg);  }
 
-
-
-.center .hand--left.hide  { transform: translate(38px, -94px)  rotate(-160deg); }
-.center .hand--right.hide { transform: translate(-38px, -94px) rotate(160deg);  }
-
-/* PEEK: halfway up */
-.center .hand--left.peek  { transform: translate(38px, -60px)  rotate(-140deg); }
-.center .hand--right.peek { transform: translate(-38px, -60px) rotate(140deg);  }
-
-
-.center .finger { position: relative; }
-.center .bone {
+.signup-center .finger { position: relative; }
+.signup-center .bone {
     width: 20px;
     height: 20px;
     border: 2px solid #111;
@@ -230,7 +213,7 @@
     border-top: none;
     background-color: #fff;
 }
-.center .nail {
+.signup-center .nail {
     position: absolute;
     left: 0;
     top: 10px;
@@ -241,80 +224,84 @@
     background-color: #fff;
     z-index: -1;
 }
+.signup-center .finger:nth-child(1),
+.signup-center .finger:nth-child(3) { top: 6px; }
+.signup-center .finger:nth-child(2) { top: 0; }
+.signup-center .finger:nth-child(1) .bone,
+.signup-center .finger:nth-child(3) .bone { height: 10px; }
+.signup-center .finger:nth-child(1) .nail,
+.signup-center .finger:nth-child(3) .nail { top: 0; }
 
-
-.center .finger:nth-child(1),
-.center .finger:nth-child(3) { top: 6px; }
-.center .finger:nth-child(2) { top: 0; }
-.center .finger:nth-child(1) .bone,
-.center .finger:nth-child(3) .bone { height: 10px; }
-.center .finger:nth-child(1) .nail,
-.center .finger:nth-child(3) .nail { top: 0; }
-
-
-.center .login {
+.signup-center .signup-form {
     position: relative;
     display: flex;
     flex-direction: column;
     padding: 0 10px;
     margin-top: -2px;
 }
-.center .login label {
+.signup-center .signup-form label {
     position: relative;
-    padding: 4px 12px;
+    padding: 2px 12px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
 }
-.center .field-icon {
+.signup-center .field-icon {
     position: absolute;
     left: 24px;
+    top: 14px;
     color: #aaa;
     pointer-events: none;
     z-index: 1;
 }
-.center .login .username,
-.center .login .password {
+.signup-center .signup-form input[type="text"],
+.signup-center .signup-form input[type="email"],
+.signup-center .signup-form input[type="password"] {
     width: 100%;
     height: 40px;
     border: 1.5px solid #e0e0e0;
     padding: 0 18px 0 38px;
     font-size: 13px;
-    font-family: "font1", "Segoe UI", Arial, sans-serif;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
     background-color: #fafafa;
     color: #111;
     outline: none;
     transition: border-color 0.2s;
     box-shadow: none;
 }
-.center .login .username:focus,
-.center .login .password:focus {
+.signup-center .signup-form input:focus {
     border-color: #111;
     background-color: #fff;
 }
-.center .login .username::placeholder,
-.center .login .password::placeholder { color: #bbb; }
+.signup-center .signup-form input::placeholder { color: #bbb; }
 
-.center .login-button {
+.signup-error {
+    color: #ff3333;
+    font-size: 10px;
+    margin-top: 2px;
+    margin-left: 2px;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
+    height: 12px;
+}
+
+.signup-center .primary-btn {
     width: calc(100% - 24px);
     height: 40px;
-    margin: 16px 12px 0;
+    margin: 10px 12px 0;
     border: none;
     background-color: #000;
     color: #fff;
     font-size: 12px;
-    font-family: "font1", "Segoe UI", Arial, sans-serif;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
     letter-spacing: 2.5px;
     cursor: pointer;
-    /* transition: background 0.2s, transform 0.1s; */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
-.center .login-button:hover  { background-color: #000; }
-
-
-.center .login-button .btn-text {
+.signup-center .primary-btn:hover { background-color: #000; }
+.signup-center .primary-btn .btn-text {
     position: relative;
     display: inline-block;
     overflow: hidden;
@@ -322,37 +309,119 @@
     line-height: 1.2em;
     color: #fff;
 }
-.center .login-button .btn-text-line {
+.signup-center .primary-btn .btn-text-line {
     display: block;
     transition: transform 0.4s ease;
     line-height: 1.2em;
     background-color: transparent;
     color: #fff;
 }
-.center .login-button .btn-text-line:last-child {
+.signup-center .primary-btn .btn-text-line:last-child {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     transform: translateY(120%);
 }
-.center .login-button:hover .btn-text-line:first-child { transform: translateY(-120%); }
-.center .login-button:hover .btn-text-line:last-child  { transform: translateY(0); }
+.signup-center .primary-btn:hover .btn-text-line:first-child { transform: translateY(-120%); }
+.signup-center .primary-btn:hover .btn-text-line:last-child  { transform: translateY(0); }
 
-
-
-
-.center .footer {
+.signup-center .footer {
     text-align: center;
     margin: 16px 0 0;
     font-size: 12px;
     color: #888;
-    font-family: "font1", "Segoe UI", Arial, sans-serif;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
 }
-.center .footer-link {
+.signup-center .footer-link {
     color: #111;
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0.5px;
+    cursor: pointer;
 }
-.center .footer-link:hover { text-decoration: underline; }
+.signup-center .footer-link:hover { text-decoration: underline; }
+
+/* Interests Step */
+.interests-container {
+    padding: 10px 24px;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
+}
+.interests-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-align: center;
+}
+.interests-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.interest-chip {
+    display: inline-block;
+}
+.interest-chip input {
+    display: none;
+}
+.interest-chip-label {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafafa;
+    color: #111;
+}
+.interest-chip input:checked + .interest-chip-label {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+/* OTP Step */
+.otp-container {
+    padding: 20px 24px;
+    text-align: center;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
+}
+.otp-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.otp-subtitle {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 20px;
+}
+.otp-input {
+    width: 100%;
+    height: 44px;
+    border: 1.5px solid #e0e0e0;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 6px;
+    font-weight: bold;
+    outline: none;
+    transition: 0.2s;
+}
+.otp-input:focus {
+    border-color: #000;
+}
+
+/* Success Message */
+.success-container {
+    padding: 30px 24px;
+    text-align: center;
+    font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
+    color: #00a000;
+}
+.success-container svg {
+    margin-bottom: 15px;
+}

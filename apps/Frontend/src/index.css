@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Neue Montreal';
+  src: url('/assests/fonts/NeueMontreal-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,7 +13,7 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Neue Montreal', system-ui, -apple-system, sans-serif;
   background-color: #000;
   color: #fff;
   overflow-x: hidden;

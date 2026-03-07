@@ -1,0 +1,116 @@
+/* notifications.css */
+.notifications-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 24px;
+    gap: 32px;
+}
+
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifications-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 24px;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    gap: 16px;
+    transition: background-color 0.2s ease;
+}
+
+.notification-card:hover {
+    background-color: var(--md-sys-color-surface-container-high);
+}
+
+.notification-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.icon-blue { background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; }
+.icon-neon { background: rgba(161, 255, 79, 0.2); color: var(--md-sys-color-primary); }
+.icon-orange { background: rgba(255, 165, 0, 0.2); color: #FFA500; }
+
+.notification-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.notification-text {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    color: var(--md-sys-color-on-surface);
+    line-height: 1.4;
+}
+
+.notification-text strong {
+    font-weight: 700;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.notification-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.notif-btn-accept {
+    background-color: var(--md-sys-color-primary);
+    border: none;
+    color: #000;
+    padding: 6px 16px;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.notif-btn-accept:hover { filter: brightness(1.1); }
+
+.notif-btn-decline {
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    padding: 6px 16px;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notif-btn-decline:hover {
+    background-color: var(--md-sys-color-surface-container-highest);
+}

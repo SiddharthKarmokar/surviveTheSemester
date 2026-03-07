@@ -1,0 +1,87 @@
+/* topuserrow.css */
+.topuserrow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.topuserrow-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+    letter-spacing: 0.1px;
+}
+
+.topuserrow-scroll {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 4px 4px 12px 4px;
+    scrollbar-width: none;
+}
+
+.topuserrow-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.user-avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.user-avatar-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.user-avatar-wrapper:active {
+    transform: scale(0.95);
+}
+
+.user-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background-color: var(--md-sys-color-surface-container-high);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.user-avatar-me {
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 24px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background-color: #388E3C;
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 2px solid var(--md-sys-color-background);
+}
+
+.user-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+    max-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}

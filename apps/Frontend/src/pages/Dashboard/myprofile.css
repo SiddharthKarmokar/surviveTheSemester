@@ -1,0 +1,7 @@
+/* myprofile.css */
+.myprofile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+}

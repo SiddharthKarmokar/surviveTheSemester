@@ -1,0 +1,159 @@
+/* profileheader.css */
+.profile-header-container {
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-cover {
+    width: 100%;
+    height: 160px;
+    background-color: #87CEEB; /* Muted blue for the pattern background */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Optional: add a CSS pattern here to mimic the screenshot */
+    background-image: radial-gradient(var(--md-sys-color-background) 2px, transparent 2px);
+    background-size: 30px 30px;
+}
+
+.profile-cover-badge {
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    padding: 4px 16px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.profile-info-section {
+    position: relative;
+    padding: 0 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.profile-avatar-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 4px solid var(--md-sys-color-surface-container);
+    background-color: var(--md-sys-color-surface-container-high);
+    margin-top: -50px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Since we don't have the image, using a placeholder styling */
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.profile-name {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}
+
+.profile-handle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.profile-friends-count {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--md-sys-color-primary);
+}
+
+.profile-tags {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.profile-tag-btn {
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    padding: 6px 12px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.profile-tag-btn:hover {
+    background-color: var(--md-sys-color-state-hover);
+}
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.profile-action-btn {
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-primary);
+    padding: 8px 16px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    text-transform: uppercase;
+}
+
+.profile-action-btn:hover {
+    background-color: rgba(161, 255, 79, 0.08);
+}
+
+.profile-share-btn {
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-on-surface);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.profile-share-btn:hover {
+    background-color: var(--md-sys-color-state-hover);
+}

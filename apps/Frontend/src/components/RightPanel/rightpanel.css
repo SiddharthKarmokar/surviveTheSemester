@@ -1,0 +1,49 @@
+/* rightpanel.css */
+.dashboard-rightpanel {
+    width: 320px;
+    background-color: var(--md-sys-color-background);
+    border-left: 1px solid var(--md-sys-color-outline-variant);
+    display: flex;
+    flex-direction: column;
+    padding: var(--md-layout-padding);
+    gap: var(--md-layout-padding);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+}
+
+.rightpanel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rightpanel-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rightpanel-flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Slightly tighter list density */
+}
+
+@media (max-width: 1200px) {
+    .dashboard-rightpanel {
+        width: 280px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-rightpanel {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+}

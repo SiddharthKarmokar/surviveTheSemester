@@ -1,0 +1,190 @@
+/* searchusers.css */
+.search-users-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 24px;
+    gap: 24px;
+}
+
+.search-header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.search-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}
+
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-on-surface);
+    padding: 16px 20px 16px 48px;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-family: inherit;
+    font-size: 16px;
+    outline: none;
+    transition: border-color var(--md-sys-motion-duration-short) ease;
+}
+
+.search-input:focus {
+    border-color: var(--md-sys-color-primary);
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--md-sys-color-on-surface-variant);
+    pointer-events: none;
+}
+
+.search-filters {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.search-filters::-webkit-scrollbar { height: 4px; }
+.search-filters::-webkit-scrollbar-track { background: transparent; }
+.search-filters::-webkit-scrollbar-thumb { background: var(--md-sys-color-outline-variant); border-radius: 4px; }
+
+.search-filter-tag {
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    padding: 8px 16px;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--md-sys-motion-duration-short) ease;
+}
+
+.search-filter-tag:hover {
+    background-color: var(--md-sys-color-surface-container-high);
+}
+
+.search-filter-tag.active {
+    background-color: rgba(161, 255, 79, 0.15); /* Primary tint */
+    border-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-primary);
+}
+
+/* User List */
+.search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-user-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.search-user-info-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.search-user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.search-user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-user-name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+}
+
+.search-user-handle {
+    margin: 2px 0 6px 0;
+    font-size: 13px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.search-user-interests {
+    display: flex;
+    gap: 8px;
+}
+
+.search-user-interest {
+    font-size: 11px;
+    background-color: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-on-surface-variant);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.search-action-btn {
+    background-color: transparent;
+    border: 1px solid var(--md-sys-color-primary);
+    color: var(--md-sys-color-primary);
+    padding: 8px 16px;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.search-action-btn:hover {
+    background-color: rgba(161, 255, 79, 0.1);
+}
+
+.search-action-btn.requested {
+    background-color: var(--md-sys-color-surface-container-highest);
+    border-color: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    cursor: default;
+}
+
+.search-action-btn.requested:hover {
+    background-color: var(--md-sys-color-surface-container-highest);
+}
