@@ -15,6 +15,7 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(__dirname, "./public");
 
 const app = express();
+app.set("trust proxy", 1);
 
 // CRITICAL: Log EVERY request at the very top
 app.use((req, res, next) => {

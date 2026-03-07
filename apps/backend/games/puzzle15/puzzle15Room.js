@@ -45,12 +45,12 @@ export class Puzzle15Room extends Room {
     const player = new PuzzlePlayer();
     player.name = String(options.playerName || "Player").slice(0, 16);
 
-    // Give each player their own copy of the starting board
+   
     player.tiles = this.state.initialTiles;
 
     this.state.players.set(client.sessionId, player);
 
-    // Store user ID for rating system
+    
     this.playerSessions.set(client.sessionId, {
       userId: options.userId,
       name: player.name,
@@ -64,7 +64,7 @@ export class Puzzle15Room extends Room {
 
     console.log(`[Puzzle15] ${player.name} joined (${this.state.players.size}/2)`);
 
-    // Start countdown when the room is full
+    
     if (this.state.players.size === 2) {
       this.state.phase = "countdown";
       this.state.countdownEndsAt = Date.now() + 3000;

@@ -1,4 +1,5 @@
 import { isAuthenticated } from "../middleware/auth.js";
+import { authRateLimit } from "../middleware/rateLimit.js";
 import {
   userRegistrations,
   verifyUser,
@@ -47,7 +48,7 @@ const router = express.Router();
  *       200:
  *         description: OTP sent successfully
  */
-router.post("/register", userRegistrations);
+router.post("/register", authRateLimit, userRegistrations);
 
 /**
  * @swagger
@@ -79,7 +80,7 @@ router.post("/register", userRegistrations);
  *       201:
  *         description: User registered successfully
  */
-router.post("/verify", verifyUser);
+router.post("/verify", authRateLimit, verifyUser);
 
 /**
  * @swagger
@@ -105,7 +106,7 @@ router.post("/verify", verifyUser);
  *       200:
  *         description: Login successful
  */
-router.post("/login", loginUser);
+router.post("/login", authRateLimit, loginUser);
 
 /**
  * @swagger
@@ -117,7 +118,7 @@ router.post("/login", loginUser);
  *       200:
  *         description: Access token refreshed
  */
-router.post("/refresh", refreshToken);
+router.post("/refresh", authRateLimit, refreshToken);
 
 /**
  * @swagger
@@ -138,7 +139,7 @@ router.post("/refresh", refreshToken);
  *       200:
  *         description: OTP sent
  */
-router.post("/forgot-password", userForgotPassword);
+router.post("/forgot-password", authRateLimit, userForgotPassword);
 
 /**
  * @swagger
@@ -161,7 +162,7 @@ router.post("/forgot-password", userForgotPassword);
  *       200:
  *         description: OTP verified
  */
-router.post("/verify-forgot-password", verifyUserForgotPasswordOtp);
+router.post("/verify-forgot-password", authRateLimit, verifyUserForgotPasswordOtp);
 
 /**
  * @swagger
@@ -184,7 +185,7 @@ router.post("/verify-forgot-password", verifyUserForgotPasswordOtp);
  *       200:
  *         description: Password reset successful
  */
-router.post("/reset-password", resetUserPassword);
+router.post("/reset-password", authRateLimit, resetUserPassword);
 
 /**
  * @swagger
@@ -211,7 +212,7 @@ router.post("/reset-password", resetUserPassword);
  *       200:
  *         description: Password updated
  */
-router.post("/update-password", isAuthenticated, updateUserPassword);
+router.post("/update-password", isAuthenticated, authRateLimit, updateUserPassword);
 
 /**
  * @swagger

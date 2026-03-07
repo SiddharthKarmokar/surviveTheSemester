@@ -36,6 +36,14 @@ const SearchUsers = () => {
     useEffect(() => {
         let cancelled = false;
 
+        if (searchQuery.trim() === '') {
+            setResults([]);
+            setIsLoading(false);
+            return () => {
+                cancelled = true;
+            };
+        }
+
         const timeoutId = setTimeout(async () => {
             setIsLoading(true);
             try {

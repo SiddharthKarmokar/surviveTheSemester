@@ -18,7 +18,7 @@ import {
   ValidationError
 } from "../errorHandlers/index.js";
 
-import { setCookie } from "../utils/cookies/setCookies.js";
+import { setCookie, clearAuthCookie } from "../utils/cookies/setCookies.js";
 import { sendLog } from "../utils/logger.js";
 import { sendGridMail, sendEmail } from "../utils/send-mail/index.js";
 
@@ -337,17 +337,8 @@ export const updateUserPassword = async(req, res, next) => {
 
 export const logOutUser = async (req, res, next) => {
   try{
-
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict"
-    });
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict"
-    });
+    clearAuthCookie(res, "accessToken");
+    clearAuthCookie(res, "refreshToken");
     res.status(200).json({
       success:true,
       message:"Logged out successfully",

@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../prisma/prisma.js';
+
+const OBJECT_ID_REGEX = /^[a-f\d]{24}$/i;
+
+const isValidObjectId = (value) => typeof value === 'string' && OBJECT_ID_REGEX.test(value);
+const toSafeArray = (value) => (Array.isArray(value) ? value : []);
 
 // Send Request
 export const sendRequest = async (req, res) => {
@@ -7,16 +11,22 @@ export const sendRequest = async (req, res) => {
         const senderId = req.user.id;
         const { receiverId } = req.body;
 
-        if (!receiverId || senderId === receiverId) {
+        if (!isValidObjectId(senderId) || !isValidObjectId(receiverId) || senderId === receiverId) {
             return res.status(400).json({ message: "Invalid receiver" });
         }
 
-        const receiver = await prisma.users.findUnique({ where: { id: receiverId } });
+        const receiver = await prisma.users.findUnique({
+            where: { id: receiverId },
+            select: { id: true, name: true, friendlist: true, receivedRequests: true }
+        });
         if (!receiver) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        if (receiver.receivedRequests.includes(senderId) || receiver.friendlist.includes(senderId)) {
+        const receiverRequests = toSafeArray(receiver.receivedRequests);
+        const receiverFriends = toSafeArray(receiver.friendlist);
+
+        if (receiverRequests.includes(senderId) || receiverFriends.includes(senderId)) {
             return res.status(400).json({ message: "Request already sent or already friends" });
         }
 
@@ -30,7 +40,10 @@ export const sendRequest = async (req, res) => {
             data: { receivedRequests: { push: senderId } }
         });
 
-        const sender = await prisma.users.findUnique({ where: { id: senderId } });
+        const sender = await prisma.users.findUnique({
+            where: { id: senderId },
+            select: { name: true }
+        });
 
         await prisma.notification.create({
             data: {
@@ -54,29 +67,45 @@ export const acceptRequest = async (req, res) => {
         const receiverId = req.user.id;
         const { senderId, notificationId } = req.body;
 
+        if (!isValidObjectId(receiverId) || !isValidObjectId(senderId)) {
+            return res.status(400).json({ message: "Invalid sender" });
+        }
+
+        if (notificationId && !isValidObjectId(notificationId)) {
+            return res.status(400).json({ message: "Invalid notification" });
+        }
+
         if (!senderId) {
             return res.status(400).json({ message: "Invalid sender" });
         }
 
-        const receiver = await prisma.users.findUnique({ where: { id: receiverId } });
-        if (!receiver.receivedRequests.includes(senderId)) {
+        const receiver = await prisma.users.findUnique({
+            where: { id: receiverId },
+            select: { name: true, receivedRequests: true }
+        });
+        const receiverRequests = toSafeArray(receiver?.receivedRequests);
+        if (!receiver || !receiverRequests.includes(senderId)) {
             return res.status(400).json({ message: "No such connection request" });
         }
 
         await prisma.users.update({
             where: { id: receiverId },
             data: {
-                receivedRequests: receiver.receivedRequests.filter(id => id !== senderId),
+                receivedRequests: receiverRequests.filter(id => id !== senderId),
                 friendlist: { push: senderId }
             }
         });
 
-        const sender = await prisma.users.findUnique({ where: { id: senderId } });
+        const sender = await prisma.users.findUnique({
+            where: { id: senderId },
+            select: { sentRequests: true, name: true }
+        });
         if (sender) {
+            const senderRequests = toSafeArray(sender.sentRequests);
             await prisma.users.update({
                 where: { id: senderId },
                 data: {
-                    sentRequests: sender.sentRequests.filter(id => id !== receiverId),
+                    sentRequests: senderRequests.filter(id => id !== receiverId),
                     friendlist: { push: receiverId }
                 }
             });
@@ -116,21 +145,37 @@ export const declineRequest = async (req, res) => {
         const receiverId = req.user.id;
         const { senderId, notificationId } = req.body;
 
-        const receiver = await prisma.users.findUnique({ where: { id: receiverId } });
+        if (!isValidObjectId(receiverId) || !isValidObjectId(senderId)) {
+            return res.status(400).json({ message: "Invalid sender" });
+        }
+
+        if (notificationId && !isValidObjectId(notificationId)) {
+            return res.status(400).json({ message: "Invalid notification" });
+        }
+
+        const receiver = await prisma.users.findUnique({
+            where: { id: receiverId },
+            select: { receivedRequests: true }
+        });
+        const receiverRequests = toSafeArray(receiver?.receivedRequests);
         
         await prisma.users.update({
             where: { id: receiverId },
             data: {
-                receivedRequests: receiver.receivedRequests.filter(id => id !== senderId),
+                receivedRequests: receiverRequests.filter(id => id !== senderId),
             }
         });
 
-        const sender = await prisma.users.findUnique({ where: { id: senderId } });
+        const sender = await prisma.users.findUnique({
+            where: { id: senderId },
+            select: { sentRequests: true }
+        });
         if (sender) {
+            const senderRequests = toSafeArray(sender.sentRequests);
             await prisma.users.update({
                 where: { id: senderId },
                 data: {
-                    sentRequests: sender.sentRequests.filter(id => id !== receiverId),
+                    sentRequests: senderRequests.filter(id => id !== receiverId),
                 }
             });
         }

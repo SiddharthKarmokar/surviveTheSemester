@@ -1,6 +1,15 @@
 import { prisma } from '../prisma/prisma.js';
 
+const OBJECT_ID_REGEX = /^[a-f\d]{24}$/i;
+const MAX_SEARCH_LENGTH = 64;
+
+const isValidObjectId = (value) => typeof value === 'string' && OBJECT_ID_REGEX.test(value);
+
 export const performUserSearch = async (currentUserId, searchQuery) => {
+  if (!isValidObjectId(currentUserId)) {
+    throw new Error('Invalid user id');
+  }
+
   const currentUser = await prisma.users.findUnique({
     where: { id: currentUserId },
     select: { friendlist: true, sentRequests: true, receivedRequests: true }
@@ -16,7 +25,11 @@ export const performUserSearch = async (currentUserId, searchQuery) => {
   const currentUserSentRequests = currentUser.sentRequests;
   const currentUserReceivedRequests = currentUser.receivedRequests;
 
-  const normalizedQuery = typeof searchQuery === 'string' ? searchQuery.trim() : '';
+  const normalizedQuery = typeof searchQuery === 'string' ? searchQuery.trim().slice(0, MAX_SEARCH_LENGTH) : '';
+  if (!normalizedQuery) {
+    return [];
+  }
+
   const sanitizedQuery = normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regexPattern = `^${sanitizedQuery}`;
   const matchConditions = [];
