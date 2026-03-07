@@ -48,10 +48,10 @@ export const checkOtpRegistrations = async (email) => {
 };
 
 
-export const sendOtp = async (name, email, template) => {
+export const sendOtp = async (name, email, template, mailer) => {
   const otp = crypto.randomInt(1000, 9999).toString();
 
-  await sendEmail(
+  await mailer(
     email,
     "Verify your Email",
     template,

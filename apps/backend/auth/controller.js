@@ -20,6 +20,7 @@ import {
 
 import { setCookie } from "../utils/cookies/setCookies.js";
 import { sendLog } from "../utils/logger.js";
+import { sendGridMail, sendEmail } from "../utils/send-mail/index.js";
 
 export const userRegistrations = async (req, res, next) => {
   try {
@@ -36,7 +37,11 @@ export const userRegistrations = async (req, res, next) => {
 
     await checkOtpRegistrations(email);
     await trackOtpRequests(email, next);
-    await sendOtp(name, email, "user-activation-mail");
+
+    const version = req.query.v || "1";
+    const mailer = version == "2" ? sendGridMail : sendEmail;
+
+    await sendOtp(name, email, "user-activation-mail", mailer);
     res.status(200).json({
       message: "OTP sent to your email. Please verify your account.",
     });
