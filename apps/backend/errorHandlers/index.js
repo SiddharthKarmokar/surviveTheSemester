@@ -66,6 +66,12 @@ class RateLimitError extends AppError {
   }
 }
 
+class GameError extends AppError {
+  constructor(message = "Game failed to run", details = null) {
+    super(message, 401, true, details);
+  }
+}
+
 export {
   AppError,
   NotFoundError,
@@ -77,4 +83,5 @@ export {
   DataError,
   InternalServerError,
   RateLimitError,
+  GameError
 };
