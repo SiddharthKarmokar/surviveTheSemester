@@ -1,4 +1,4 @@
-import { getDistance } from '../../../core/common/math';
+import { getDistance } from '../../../../core/common/math.js';
 
 /**
  * Return which side of the second Rectangle the first collides with

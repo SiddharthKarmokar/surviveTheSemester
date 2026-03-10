@@ -4,12 +4,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import registerAllRoutes from "./routes/index.js";
 import { errorMiddleware } from "./middleware/error.js"; 
-import cookieParser from "cookie-parser";
 import compression from "compression";
 import { createServer }  from "http";
 import registerGameServer from "./games/index.js";
 import { join } from "path";
+import { fileURLToPath } from "url";
 
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(__dirname, "./public");
 
 const app = express();
@@ -31,7 +32,7 @@ app.use(express.static(PUBLIC_DIR));
 const httpServer = createServer(app);
 const gameServer = registerGameServer(app, httpServer);
 
-app.get("*", (req, res)=>{
+app.use((req, res) => {
   res.sendFile(join(PUBLIC_DIR, "index.html"));
 })
 

@@ -1,5 +1,5 @@
-import { Vector2 } from '../src/geometry';
-import { Maths } from '..';
+import { Vector2 } from '../src/geometry.js';
+import { Maths } from '../src/index.js';
 
 export class Map {
 

@@ -1,4 +1,4 @@
-import * as Maths from "./math"
-import * as Constants from "./constants"
+import * as Maths from "./math.js"
+import * as Constants from "./constants.js"
 
 export { Maths, Constants };

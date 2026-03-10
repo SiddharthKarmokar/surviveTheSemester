@@ -1,5 +1,3 @@
-import { TMX } from './tmx';
-
 /**
  * A class used to parse Tiled maps from JSON.
  */

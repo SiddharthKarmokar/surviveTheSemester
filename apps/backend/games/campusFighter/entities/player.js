@@ -1,6 +1,6 @@
 import { defineTypes } from "@colyseus/schema";
-import { Maths } from "../../../core/common/index";
-import { Circle } from "./circle";
+import { Maths } from "../../../core/common/index.js";
+import { Circle } from "./circle.js";
 
 export class Player extends Circle {
 

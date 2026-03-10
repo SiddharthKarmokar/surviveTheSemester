@@ -1,63 +1,66 @@
-import { GameRoom } from "../../../core/room/gameRoom"
-import { GameState } from "../state/FighterState";
-import { gameConstants, Maths } from "../src";
+import { Room } from "colyseus"
+import { GameState } from "../state/FighterState.js";
+import { gameConstants, Maths } from "../src/index.js";
 
-export class fighterGameRoom extends GameRoom {
-
+export class fighterGameRoom extends Room {
     onCreate(options) {
-        this.maxClients = Maths.clamp(
-            options.roomMaxPlayers || 0,
-            gameConstants.ROOM_PLAYERS_MIN,
-            gameConstants.ROOM_PLAYERS_MAX
-        );
+        try {
+            console.log("fighterGameRoom created:", options);
+            this.maxClients = Maths.clamp(
+                options.roomMaxPlayers || 0,
+                gameConstants.ROOM_PLAYERS_MIN,
+                gameConstants.ROOM_PLAYERS_MAX
+            );
 
-        const playerName = options.playerName.slice(0, gameConstants.PLAYER_NAME_MAX);
-        const roomName = options.roomName.slice(0, gameConstants.ROOM_NAME_MAX);
+            const playerName = options.playerName.slice(0, gameConstants.PLAYER_NAME_MAX);
+            const roomName = options.roomName.slice(0, gameConstants.ROOM_NAME_MAX);
 
-        this.setMetadata({
-            playerName,
-            roomName,
-            roomMap: options.roomMap,
-            roomMaxPlayers: this.maxClients,
-            mode: options.mode,
-        });
-
-        // Init State
-        this.state(
-            new GameState(
+            this.setMetadata({
+                playerName,
                 roomName,
-                options.roomMap,
-                this.maxClients,
-                options.mode,
-                this.handleMessage
-            )
-        );
+                roomMap: options.roomMap,
+                roomMaxPlayers: this.maxClients,
+                mode: options.mode,
+            });
 
-        this.setSimulationInterval(() => this.handleTick());
+            // Init State
+            this.state = new GameState(
+                    roomName,
+                    options.roomMap,
+                    this.maxClients,
+                    options.mode,
+                    this.handleMessage
+            );
 
-        console.log(
-            `${new Date().toISOString()} [Create] player=${playerName} room=${roomName} map=${options.roomMap} max=${this.maxClients} mode=${options.mode}`
-        );
+            this.setSimulationInterval(() => this.handleTick());
 
-        // Listen to messages from clients
-        this.onMessage('*', (client, type, message) => {
+            console.log(
+                `${new Date().toISOString()} [Create] player=${playerName} room=${roomName} map=${options.roomMap} max=${this.maxClients} mode=${options.mode}`
+            );
 
-            const playerId = client.sessionId;
+            // Listen to messages from clients
+            this.onMessage('*', (client, type, message) => {
 
-            switch (type) {
-                case 'move':
-                case 'rotate':
-                case 'shoot':
-                    this.state.playerPushAction({
-                        playerId,
-                        ...message,
-                    });
-                    break;
+                const playerId = client.sessionId;
 
-                default:
-                    break;
-            }
-        });
+                switch (type) {
+                    case 'move':
+                    case 'rotate':
+                    case 'shoot':
+                        this.state.playerPushAction({
+                            playerId,
+                            ...message,
+                        });
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+        } catch(err){
+            console.error("ROOM CREATION ERROR:", err);
+            throw err;
+        }
     }
 
     onJoin(client, options) {

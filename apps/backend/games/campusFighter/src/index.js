@@ -1,13 +1,13 @@
-import * as Collisions from './collisions';
-import * as Constants from './constants';
-import * as gameConstants from '../../../core/common/constants'
-import * as Entities from './entities';
-import * as Geometry from './geometry';
-import * as Keys from '../../../core/common/keys';
-import * as Maps from './maps';
-import * as Maths from './../../../core/common/math';
-import * as Models from './models';
-import * as Tiled from './tiled';
-import * as Types from './types';
+import * as Collisions from './collisions/index.js';
+import * as Constants from './constants.js';
+import * as gameConstants from '../../../core/common/constants.js'
+import * as Entities from '../entities/index.js';
+import * as Geometry from './geometry.js';
+import * as Keys from '../../../core/common/keys.js';
+import * as Maps from './maps/index.js';
+import * as Maths from './../../../core/common/math.js';
+// import * as Models from './models';
+import * as Tiled from './tiled/index.js';
+// import * as Types from './types';
 
-export { Collisions, Constants, gameConstants, Entities, Geometry, Keys, Maths, Maps, Models, Tiled, Types };
+export { Collisions, Constants, gameConstants, Entities, Geometry, Keys, Maths, Maps, Tiled };

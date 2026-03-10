@@ -1,6 +1,6 @@
-import { COLLISION_TYPES } from './types';
-import { RectangleBody } from '../geometry';
-import { circleToRectangleSide, rectangleToRectangleSide } from '.';
+import { COLLISION_TYPES } from './types.js';
+import { RectangleBody } from '../geometry.js';
+import { circleToRectangleSide, rectangleToRectangleSide } from './index.js';
 import RBush from 'rbush';
 
 /**

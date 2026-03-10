@@ -1,3 +1,3 @@
-export * from './collisions';
-export * from './types';
-export * from './utils';
+export * from './collisions.js';
+export * from './types.js';
+export * from './utils.js';
