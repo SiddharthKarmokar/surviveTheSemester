@@ -5,5 +5,6 @@ import { Monster } from "./monster";
 import { Player } from "./player";
 import { Prop } from "./prop";
 import { Rectangle } from "./rectangle";
+import { Map } from "./map";
 
-export { Bullet, Circle, Game, Monster, Player, Prop, Rectangle };
+export { Bullet, Circle, Game, Monster, Player, Prop, Rectangle, Map };

@@ -1,7 +1,5 @@
-import { Client } from "colyseus";
 import { GameAdapter } from "../../core/common/index";
 import { FighterState } from "./state/FighterState"
-import { Maths, Constants } from "../../core/common/index"
 
 export default class FighterAdapter extends GameAdapter {
     constructor() {
@@ -11,7 +9,7 @@ export default class FighterAdapter extends GameAdapter {
 
     init(options) {
         
-        this.state = new FigherState(
+        this.state = new FighterState(
             options.roomName,
             options.roomMap,
             options.roomMaxPlayers,

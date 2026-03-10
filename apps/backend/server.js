@@ -4,6 +4,11 @@ import registerAllRoutes from "./routes/index.js";
 import { errorMiddleware } from "./middleware/error.js"; 
 import cookieParser from "cookie-parser";
 import compression from "compression";
+import { createServer }  from "http";
+import registerGameServer from "./games/index.js";
+import { join } from "path";
+
+const PUBLIC_DIR = join(__dirname, "./public");
 
 const app = express();
 
@@ -14,11 +19,24 @@ app.use(compression())
 
 
 registerAllRoutes(app);
+app.use(express.static(PUBLIC_DIR));
+
+const httpServer = createServer(app);
+const gameServer = registerGameServer(app, httpServer);
+
+app.get("*", (req, res)=>{
+  res.sendFile(join(PUBLIC_DIR, "index.html"));
+})
 
 app.use(errorMiddleware);
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+httpServer.listen(PORT, ()=>{
+  console.log(`Server running on ${PORT}`);
+  console.log(`WebSocket running on ${PORT}`);
+});
+
+gameServer.onShutdown(() => {
+  console.log("Game server shutting down.");
 });
