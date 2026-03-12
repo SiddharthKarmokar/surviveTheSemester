@@ -1,4 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/userSlice';
 import '../css/login-modal.css';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
@@ -11,6 +13,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const dispatch = useDispatch();
 
     const hideHands = useCallback(() => {
         leftHandRef.current?.classList.add('hide');
@@ -159,6 +162,9 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
                         if (!response.ok) {
                             setErrorMsg(data.message || "Invalid credentials");
                         } else {
+                            if (data.user) {
+                                dispatch(setUser(data.user));
+                            }
                             onClose();
                             window.history.pushState({}, '', '/dashboard');
                             window.dispatchEvent(new PopStateEvent('popstate'));

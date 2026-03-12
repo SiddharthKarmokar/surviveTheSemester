@@ -1,5 +1,6 @@
 import express from "express";
 import { authRoutes } from "../auth/route.js";
+import userRoutes from "./userRoutes.js";
 import {connectRedis} from "../redis/index.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
@@ -23,4 +24,5 @@ export default function registerAllRoutes(app) {
   app.use("/docs", swaggerUI.serve, swaggerUI.setup(specs));
   app.use("/healthz", healthRouter)
   app.use("/auth", authRoutes);
+  app.use("/api/users", userRoutes);
 }

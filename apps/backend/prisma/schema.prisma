@@ -36,6 +36,11 @@ model users {
   maxStreak  Int        @default(0)
   interest   String[]   @default([])
 
+  sentRequests     String[]   @default([])
+  receivedRequests String[]   @default([])
+
+  @@index([name])
+
   avatarId String? @unique @db.ObjectId
   avatar images? @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

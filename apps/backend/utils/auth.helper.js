@@ -14,9 +14,9 @@ export const validateRegistrationData = (data) => {
     throw new ValidationError("Request body missing");
   }
 
-  const { name, email, password, phoneNumber } = data;
+  const { name, email } = data;
 
-  if (!name || !email || !password || !phoneNumber) {
+  if (!name || !email) {
     throw new ValidationError("Missing required fields");
   }
 

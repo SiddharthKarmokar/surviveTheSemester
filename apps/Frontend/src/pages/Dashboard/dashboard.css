@@ -66,6 +66,18 @@ body {
   font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif; 
 }
 
+/* Enforce Neue Montreal on all elements inside the dashboard */
+.dashboard-container * {
+  font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
+}
+
+/* Ensure Icons do not get overridden */
+.dashboard-container .material-icons,
+.dashboard-container .material-symbols-outlined,
+.dashboard-container mdui-icon {
+  font-family: 'Material Symbols Outlined', 'Material Icons', system-ui !important;
+}
+
 /* Base Dashboard Grid Layout */
 .dashboard-container {
   display: grid;

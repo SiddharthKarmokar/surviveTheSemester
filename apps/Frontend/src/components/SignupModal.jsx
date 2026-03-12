@@ -1,4 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/userSlice';
 import '../css/signup-modal.css';
 
 const INTERESTS_LIST = [
@@ -25,6 +27,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const dispatch = useDispatch();
 
     // Reset when closed
     useEffect(() => {
@@ -148,7 +151,8 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                 body: JSON.stringify({ 
                     name: formData.name, 
                     email: formData.email 
-                })
+                }),
+                credentials: 'include'
             });
             
             const data = await response.json();
@@ -180,8 +184,10 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                     name: formData.name,
                     email: formData.email,
                     password: formData.password,
-                    otp: otp
-                })
+                    otp: otp,
+                    interest: interests
+                }),
+                credentials: 'include'
             });
 
             const data = await response.json();
@@ -189,6 +195,9 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }) => {
             if (!response.ok) {
                 setErrors({ otp: data.message || "Invalid OTP" });
             } else {
+                if (data.user) {
+                    dispatch(setUser(data.user));
+                }
                 setIsSuccess(true);
                 setTimeout(() => {
                     onClose();

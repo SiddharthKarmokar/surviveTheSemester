@@ -52,7 +52,7 @@ export const userRegistrations = async (req, res, next) => {
 
 export const verifyUser = async (req, res, next) => {
   try {
-    const {email, otp, password, name} = req.body;
+    const {email, otp, password, name, interest} = req.body;
     if(!email || !otp || !password || !name){
       return next(new ValidationError("Email, OTP and Password are required"));
     }
@@ -66,7 +66,7 @@ export const verifyUser = async (req, res, next) => {
     await verifyOtp(email, otp, next);
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await prisma.users.create({
+    const user = await prisma.users.create({
       data: {
         name,
         email,
@@ -76,13 +76,41 @@ export const verifyUser = async (req, res, next) => {
         HighScore: [],
         streak: 0,
         maxStreak: 0,
-        interest: []  
+        interest: interest || []  
       }
     });
 
+    const accessToken = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {expiresIn: "1d"}
+    );
+    
+    const refreshToken = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    setCookie(res, "refreshToken", refreshToken);
+    setCookie(res, "accessToken", accessToken);
+
     res.status(201).json({
       success: true,
-      message: "User registered successfully"
+      message: "User registered successfully",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
     });
 
   }catch(err){
@@ -99,12 +127,10 @@ export const loginUser = async (req, res, next) => {
     }
     
     const user = await prisma.users.findUnique({where: {email}});
-
     if(!user){
       return next(new NotFoundError("User not found"));
     }
     const isMatch = await bcrypt.compare(password, user.passwordHash);
-
     if(!isMatch){
       return next(new AuthenticationError("Invalid credentials"));
     } 
@@ -125,8 +151,8 @@ export const loginUser = async (req, res, next) => {
         name: user.name,
         email: user.email
       },
-      process.env.ACCESS_TOKEN_SECRET,
-      {expiresIn: "1d"}
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
     );
 
     setCookie(res, "refreshToken", refreshToken);
