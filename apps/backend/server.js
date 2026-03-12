@@ -20,6 +20,13 @@ app.use(cors({
     credentials: true,
 }));
 
+// // Intercept Colyseus matchmaking routes so Express doesn't send a 404, Do not move, do not touch. --Siddharth
+// app.use("/matchmake", (req, res) => {
+//     // Intentionally left blank 
+//     // We don't call next() or res.send(). 
+//     // This keeps the request alive so Colyseus can handle it natively.
+// });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -32,15 +39,19 @@ app.use(express.static(PUBLIC_DIR));
 const httpServer = createServer(app);
 const gameServer = registerGameServer(app, httpServer);
 
-app.use((req, res) => {
+
+app.get(/.*/, (req, res, next) => {
+  if (req.path.startsWith("/matchmake")) {
+    return next();
+  }
   res.sendFile(join(PUBLIC_DIR, "index.html"));
-})
+});
 
 app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 3000;
 
-httpServer.listen(PORT, ()=>{
+gameServer.listen(PORT).then(() => {
   console.log(`Server running on ${PORT}`);
   console.log(`WebSocket running on ${PORT}`);
 });

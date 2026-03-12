@@ -127,12 +127,10 @@ export const loginUser = async (req, res, next) => {
     }
     
     const user = await prisma.users.findUnique({where: {email}});
-    console.log("Reached here 1");
     if(!user){
       return next(new NotFoundError("User not found"));
     }
     const isMatch = await bcrypt.compare(password, user.passwordHash);
-    console.log("Reached here 2");
     if(!isMatch){
       return next(new AuthenticationError("Invalid credentials"));
     } 

@@ -1,4 +1,4 @@
-import { Room } from "colyseus"
+import { Room } from "@colyseus/core"
 import { GameState } from "../state/FighterState.js";
 import { gameConstants, Maths } from "../src/index.js";
 
