@@ -1,0 +1,48 @@
+body{
+text-align:center;
+font-family:Arial;
+background:#f2f2f2;
+}
+
+.controls{
+margin:15px;
+}
+
+#game-board{
+display:grid;
+gap:5px;
+justify-content:center;
+margin:20px auto;
+}
+
+.cell{
+width:50px;
+height:50px;
+background:white;
+border:2px solid black;
+font-size:22px;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.fixed{
+background:#ddd;
+cursor:not-allowed;
+}
+
+button,select{
+padding:8px 12px;
+margin:5px;
+}
+
+.rules{
+display:none;
+background:white;
+width:300px;
+margin:auto;
+padding:10px;
+border:1px solid #aaa;
+}

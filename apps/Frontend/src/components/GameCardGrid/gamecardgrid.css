@@ -15,8 +15,29 @@
 }
 
 .gamecardgrid-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 16px;
     width: 100%;
+    padding-bottom: 8px; /* For scrollbar */
+    scroll-snap-type: x mandatory;
+}
+
+.gamecardgrid-grid > * {
+    flex: 0 0 auto;
+    width: 280px;
+    scroll-snap-align: start;
+}
+
+/* Hide scrollbar for a cleaner look, or style it */
+.gamecardgrid-grid::-webkit-scrollbar {
+    height: 8px;
+}
+.gamecardgrid-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+.gamecardgrid-grid::-webkit-scrollbar-thumb {
+    background: var(--md-sys-color-surface-variant);
+    border-radius: 4px;
 }

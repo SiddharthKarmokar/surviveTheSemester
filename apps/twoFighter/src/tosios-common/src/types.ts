@@ -1,0 +1,16 @@
+export type GameState = 'waiting' | 'lobby' | 'game';
+export type GameMode = 'deathmatch' | 'team deathmatch';
+export type Teams = 'Red' | 'Blue';
+export type WallCollisionType = 'full' | 'none';
+
+export interface PlayerOptions {
+    playerName?: string;
+}
+
+export interface RoomOptions {
+    playerName?: string;
+    roomName: string;
+    roomMap: string;
+    roomMaxPlayers: number;
+    mode: GameMode;
+}

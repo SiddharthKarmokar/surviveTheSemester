@@ -7,7 +7,11 @@ import Features from './components/Features';
 import GamesList from './components/GamesList';
 import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard/Dashboard';
-import './App.css'; 
+import Puzzle15Page from './pages/Games/Puzzle15/Puzzle15Page';
+import CanonGamePage from './pages/Games/CanonGame/CanonGamePage';
+import MathTugPage from './pages/Games/MathTug/MathTugPage';
+import BinarySudokuPage from './pages/Games/BinarySudoku/BinarySudokuPage';
+import './App.css';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -23,6 +27,22 @@ function App() {
 
   if (currentPath === '/dashboard') {
     return <Dashboard />;
+  }
+
+  if (currentPath.startsWith('/puzzle')) {
+    return <Puzzle15Page />;
+  }
+
+  if (currentPath.startsWith('/canon')) {
+    return <CanonGamePage />;
+  }
+
+  if (currentPath.startsWith('/mathtug')) {
+    return <MathTugPage />;
+  }
+
+  if (currentPath.startsWith('/binarysudoku')) {
+    return <BinarySudokuPage />;
   }
 
   return (

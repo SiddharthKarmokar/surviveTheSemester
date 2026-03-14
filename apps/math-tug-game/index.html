@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Math Tug Of War</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Math Tug Of War</h1>
+
+<div class="scoreboard">
+Player 1: <span id="p1score">0</span>
+|
+Player 2: <span id="p2score">0</span>
+</div>
+
+<div class="timer">
+⏱ Time: <span id="timer">10</span>
+</div>
+
+<div class="players">
+
+<div class="player-box">
+
+<h3>Player 1</h3>
+<p id="q1"></p>
+
+<input id="ans1" type="number" placeholder="Answer">
+
+<p>Press <b>A</b> to submit</p>
+
+<p class="answer-view">Answer: <span id="show1">-</span></p>
+
+</div>
+
+
+<div class="player-box">
+
+<h3>Player 2</h3>
+<p id="q2"></p>
+
+<input id="ans2" type="number" placeholder="Answer">
+
+<p>Press <b>L</b> to submit</p>
+
+<p class="answer-view">Answer: <span id="show2">-</span></p>
+
+</div>
+
+</div>
+
+
+<div class="arena">
+
+<div id="p1char" class="character">🧑</div>
+
+<div class="rope-area">
+
+<div class="rope"></div>
+
+<div id="flag"></div>
+
+</div>
+
+<div id="p2char" class="character">🧑‍💻</div>
+
+</div>
+
+<button onclick="startGame()">Start Game</button>
+
+<p id="message"></p>
+
+<script src="script.js"></script>
+
+</body>
+</html>

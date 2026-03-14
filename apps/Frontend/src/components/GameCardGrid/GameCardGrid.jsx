@@ -4,13 +4,18 @@ import './gamecardgrid.css';
 
 import puzzleAnim from '../../assests/lottie/15puzzle.json';
 import swipeAnim from '../../assests/lottie/swipe.json';
+// Let's use puzzleAnim as fallback or just nothing since Lottie handles missing data gracefully
 
 const games = [
-    { id: 1, title: '15 Puzzle', animationData: puzzleAnim },
-    { id: 2, title: 'Make Grid Equal', animationData: swipeAnim },
+    { id: 1, title: 'Two Player Arena (TOSIOS)', animationData: puzzleAnim, gameId: 'twoPlayer' },
+    { id: 2, title: '15 Puzzle', animationData: puzzleAnim, gameId: 'puzzle' },
+    { id: 3, title: 'Make Grid Equal', animationData: swipeAnim, gameId: 'makeGrid' },
+    { id: 4, title: 'Canon Game', animationData: puzzleAnim, gameId: 'canonGame' },
+    { id: 5, title: 'Math Tug-of-War', animationData: puzzleAnim, gameId: 'mathTug' },
+    { id: 6, title: 'Binary Sudoku', animationData: puzzleAnim, gameId: 'binarySudoku' },
 ];
 
-const GameCardGrid = () => {
+const GameCardGrid = ({ onPlayGame }) => {
     return (
         <div className="gamecardgrid-container">
             <h3 className="gamecardgrid-title">Arena Games</h3>
@@ -20,6 +25,7 @@ const GameCardGrid = () => {
                         key={game.id} 
                         title={game.title} 
                         animationData={game.animationData} 
+                        onClick={() => onPlayGame && onPlayGame(game.gameId)}
                     />
                 ))}
             </div>

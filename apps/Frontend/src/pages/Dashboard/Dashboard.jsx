@@ -11,8 +11,24 @@ import Chat from './Chat';
 import SearchUsers from './SearchUsers';
 import Notifications from './Notifications';
 
+const TWO_PLAYER_URL = import.meta.env.VITE_TWO_PLAYER_GAME_URL || 'http://localhost:3000';
+
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('Arena');
+
+    const handlePlayGame = (gameId) => {
+        if (gameId === 'twoPlayer') {
+            window.location.href = TWO_PLAYER_URL;
+        } else if (gameId === 'puzzle') {
+            window.location.href = '/puzzle';
+        } else if (gameId === 'canonGame') {
+            window.location.href = '/canon';
+        } else if (gameId === 'mathTug') {
+            window.location.href = '/mathtug';
+        } else if (gameId === 'binarySudoku') {
+            window.location.href = '/binarysudoku';
+        }
+    };
 
     const renderMainContent = () => {
         if (activeTab === 'My profile') {
@@ -33,7 +49,7 @@ const Dashboard = () => {
         return (
             <>
                 <TopUserRow />
-                <GameCardGrid />
+                <GameCardGrid onPlayGame={handlePlayGame} />
             </>
         );
     };

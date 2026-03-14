@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "dev:backend": "npm run dev --prefix apps/backend",
+    "dev:frontend": "npm run dev --prefix apps/Frontend",
+    "build:twofighter": "npm run build --prefix apps/twoFighter",
+    "dev:twofighter": "npm run dev --prefix apps/twoFighter"
+  },
   "devDependencies": {
     "nodemon": "^3.1.14"
   }

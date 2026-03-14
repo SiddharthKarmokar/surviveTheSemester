@@ -24,13 +24,13 @@ export class fighterGameRoom extends Room {
             });
 
             // Init State
-            this.state = new GameState(
+            this.setState(new GameState(
                     roomName,
                     options.roomMap,
                     this.maxClients,
                     options.mode,
                     this.handleMessage
-            );
+            ));
 
             this.setSimulationInterval(() => this.handleTick());
 
@@ -66,6 +66,10 @@ export class fighterGameRoom extends Room {
     onJoin(client, options) {
 
         this.state.playerAdd(client.sessionId, options.playerName);
+        this.broadcast("playersStatus", {
+            count: this.state.players.size,
+            maxCount: this.maxClients,
+        });
         console.log(
             `${new Date().toISOString()} [Join] id=${client.sessionId} player=${options.playerName}`
         );
@@ -74,6 +78,10 @@ export class fighterGameRoom extends Room {
     onLeave(client) {
 
         this.state.playerRemove(client.sessionId);
+        this.broadcast("playersStatus", {
+            count: this.state.players.size,
+            maxCount: this.maxClients,
+        });
         console.log(
             `${new Date().toISOString()} [Leave] id=${client.sessionId}`
         );

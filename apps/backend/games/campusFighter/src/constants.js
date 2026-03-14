@@ -1,3 +1,6 @@
+// Map
+export const TILE_SIZE = 16;
+
 // Player (circle)
 export const PLAYER_SIZE = 32;
 export const PLAYER_SPEED = 1;

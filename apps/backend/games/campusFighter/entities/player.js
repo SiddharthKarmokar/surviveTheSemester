@@ -41,6 +41,11 @@ export class Player extends Circle {
 
   setRotation(rotation) { this.rotation = rotation; }
 
+  setTeam(team) {
+    this.team = team;
+    this.color = getTeamColor(team);
+  }
+
 }
 
 defineTypes(Player, {

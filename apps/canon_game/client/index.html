@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cannon Duel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="gameCanvas"></canvas>
+
+      <div id="hud" class="hidden">
+        <div class="topbar">
+          <div class="topbar-group scores-group">
+            <span id="scoreLeft">Player: 0</span>
+            <span id="scoreRight">Opponent: 0</span>
+            <span id="targetScore">Target: 3</span>
+          </div>
+          <div class="topbar-group utility-group">
+            <span id="windIndicator" class="wind-indicator"></span>
+            <button id="exitBtn" class="ghost">Exit</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="menuScreen" class="screen">
+        <div class="card title-card">
+          <p class="eyebrow">Physics Artillery Duel</p>
+          <h1>CANNON DUEL</h1>
+          <p class="subtitle">Lock your angle, charge your shot, and arc shells through the wind.</p>
+          <div class="menu-actions">
+            <button id="howToBtn">How To Play</button>
+            <button id="playFriendBtn">Play vs Friend</button>
+            <button id="playBotBtn" class="accent">Play vs Bot</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="howToScreen" class="screen hidden">
+        <div class="card narrow">
+          <h2>How To Play</h2>
+          <p>Watch your cannon aim sweep. Press and hold to freeze the barrel and charge power. Release to fire.</p>
+          <p>You can keep firing without waiting for older shots to land. Mid-air collisions explode instantly.</p>
+          <button data-back-menu>Back</button>
+        </div>
+      </div>
+
+      <div id="difficultyScreen" class="screen hidden">
+        <div class="card narrow">
+          <h2>Bot Setup</h2>
+          <label class="field-label" for="difficultySlider">Difficulty</label>
+          <input id="difficultySlider" type="range" min="0" max="2" value="1" />
+          <div id="difficultyLabel" class="difficulty-label">Normal</div>
+
+          <label class="field-label" for="botTargetSelect">Target Score</label>
+          <select id="botTargetSelect" class="pill-select">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+
+          <label class="field-label" for="botThemeSelect">Theme</label>
+          <select id="botThemeSelect" class="pill-select">
+            <option value="space">Space</option>
+            <option value="jungle">Jungle</option>
+            <option value="desert">Desert</option>
+          </select>
+
+          <div class="menu-actions compact">
+            <button data-back-menu>Back</button>
+            <button id="startBotBtn" class="accent">Play</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="friendScreen" class="screen hidden">
+        <div class="card narrow">
+          <h2>Play vs Friend</h2>
+          <label class="field-label" for="friendTargetSelect">Target Score</label>
+          <select id="friendTargetSelect" class="pill-select">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+
+          <label class="field-label" for="friendThemeSelect">Theme</label>
+          <select id="friendThemeSelect" class="pill-select">
+            <option value="space">Space</option>
+            <option value="jungle">Jungle</option>
+            <option value="desert">Desert</option>
+          </select>
+
+          <div class="room-actions">
+            <button id="createRoomBtn" class="accent">Create Room</button>
+            <input id="roomCodeInput" maxlength="6" placeholder="ROOM ID" />
+            <button id="joinRoomBtn">Join Room</button>
+          </div>
+          <div id="roomStatus" class="room-status">Create a room or enter a code to join.</div>
+          <div class="menu-actions compact">
+            <button data-back-menu>Back</button>
+            <button id="readyBtn" class="hidden">Ready</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="overlayScreen" class="screen hidden">
+        <div class="card narrow">
+          <h2 id="overlayTitle">Victory</h2>
+          <p id="overlayBody">Player wins!</p>
+          <button id="overlayBtn" class="accent">Back To Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

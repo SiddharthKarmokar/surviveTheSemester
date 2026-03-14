@@ -25,12 +25,12 @@ export class Game extends Schema {
 
         if(this.onGameStart)this.onGameStart();
       }
-    }else if(this.game === "game") {
+    }else if(this.state === "game") {
       if(this.gameEndsAt && now >= this.gameEndsAt){
         this.state = "end";
 
         if(this.onGameEnd) this.onGameEnd({
-          type: "end",
+          type: "timeout",
           from: "server",
           ts: now,
           params: { reason: "time_up" }

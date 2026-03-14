@@ -1,0 +1,244 @@
+:root {
+  --bg-top: #9dd8ff;
+  --panel: rgba(255, 247, 226, 0.88);
+  --line: rgba(255, 166, 92, 0.28);
+  --text: #55311b;
+  --muted: #8d674f;
+  --accent: #ffb84d;
+  --accent-2: #ff7f50;
+  --soft: #fff9ef;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #d9f1ff, var(--bg-top) 36%, #76bff3 100%);
+  color: var(--text);
+  font-family: "Outfit", sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.8) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 80% 24%, rgba(255, 255, 255, 0.65) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 52% 10%, rgba(255, 246, 211, 0.9) 0 2px, transparent 2.2px),
+    radial-gradient(circle at 28% 42%, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.7px),
+    radial-gradient(circle at 74% 58%, rgba(255, 255, 255, 0.65) 0 1px, transparent 1.4px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+#app,
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+#gameCanvas {
+  display: block;
+}
+
+.screen,
+#hud {
+  position: fixed;
+  inset: 0;
+}
+
+.screen {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.card {
+  width: min(560px, 100%);
+  padding: 32px;
+  border-radius: 28px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 251, 240, 0.97), rgba(255, 237, 211, 0.9));
+  backdrop-filter: blur(14px);
+  box-shadow: 0 26px 70px rgba(183, 121, 52, 0.18);
+}
+
+.narrow {
+  width: min(480px, 100%);
+}
+
+.title-card h1,
+.card h2 {
+  margin: 0 0 12px;
+  font-family: "Bungee", cursive;
+  letter-spacing: 0.06em;
+  color: #7a3f14;
+}
+
+.title-card h1 {
+  font-size: clamp(2.8rem, 8vw, 5.2rem);
+  line-height: 0.95;
+}
+
+.eyebrow,
+.subtitle,
+.card p,
+.room-status,
+.field-label {
+  color: var(--muted);
+}
+
+.menu-actions,
+.room-actions,
+.topbar,
+.topbar-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.menu-actions {
+  margin-top: 26px;
+}
+
+.compact {
+  justify-content: space-between;
+}
+
+button,
+input,
+select {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 18px;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: #fff7e8;
+  color: #6b390f;
+  font-weight: 700;
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+  box-shadow: 0 8px 18px rgba(255, 181, 76, 0.18);
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(255, 148, 81, 0.22);
+}
+
+button.accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff8ef;
+}
+
+button.ghost {
+  background: rgba(255, 255, 255, 0.72);
+  color: #7a471a;
+  border: 1px solid rgba(255, 166, 92, 0.35);
+}
+
+input,
+select {
+  min-width: 120px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
+  border: 1px solid rgba(255, 166, 92, 0.28);
+}
+
+#hud {
+  padding: 18px 22px;
+  pointer-events: none;
+}
+
+#hud > * {
+  pointer-events: auto;
+}
+
+.topbar {
+  width: min(1100px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 14px 18px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 251, 240, 0.96), rgba(255, 238, 213, 0.92));
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(183, 121, 52, 0.15);
+}
+
+.topbar-group {
+  align-items: center;
+}
+
+.scores-group {
+  font-weight: 700;
+}
+
+.utility-group {
+  margin-left: auto;
+}
+
+.wind-indicator {
+  min-width: 156px;
+  text-align: center;
+  font-weight: 700;
+  color: #93511f;
+}
+
+.field-label {
+  display: block;
+  margin: 18px 0 10px;
+  font-size: 0.95rem;
+}
+
+.difficulty-label {
+  margin: 14px 0 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e67b2d;
+}
+
+.pill-select,
+#difficultySlider {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .topbar {
+    width: calc(100vw - 18px);
+  }
+
+  .topbar,
+  .topbar-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .utility-group {
+    margin-left: 0;
+  }
+
+  .wind-indicator,
+  #exitBtn {
+    width: 100%;
+  }
+}
