@@ -9,12 +9,12 @@ export const performUserSearch = async (currentUserId, searchQuery) => {
   if (!currentUser) throw new Error("User not found");
 
   const excludeIds = [
-    { $oid: currentUserId },
-    ...currentUser.sentRequests.map(id => ({ $oid: id })),
-    ...currentUser.receivedRequests.map(id => ({ $oid: id }))
+    { $oid: currentUserId }
   ];
 
   const currentUserConnections = currentUser.friendlist.map(id => ({ $oid: id }));
+  const currentUserSentRequests = currentUser.sentRequests;
+  const currentUserReceivedRequests = currentUser.receivedRequests;
 
   const sanitizedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regexPattern = `^${sanitizedQuery}`;
@@ -72,5 +72,16 @@ export const performUserSearch = async (currentUserId, searchQuery) => {
     ]
   });
 
-  return rawResults;
+  // Map to include request statuses
+  const finalResults = rawResults.map(user => {
+    const isSentRequest = currentUserSentRequests.includes(user.id);
+    const isReceivedRequest = currentUserReceivedRequests.includes(user.id);
+    return {
+      ...user,
+      isSentRequest,
+      isReceivedRequest
+    };
+  });
+
+  return finalResults;
 };

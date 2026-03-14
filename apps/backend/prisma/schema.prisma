@@ -45,4 +45,16 @@ model users {
   avatar images? @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   images images[] @relation("UserImages")
+  notifications Notification[]
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      users    @relation(fields: [userId], references: [id])
+  type      String   // e.g., 'request', 'accepted', 'general'
+  message   String
+  senderId  String?  @db.ObjectId
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

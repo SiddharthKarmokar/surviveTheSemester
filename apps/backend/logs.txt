@@ -1,0 +1,24 @@
+
+> survivethesemester@1.0.0 start
+> node server.js
+
+{"level":"WARN","timestamp":"2026-03-14T09:29:50.067Z","logger":"kafkajs","message":"KafkaJS v2.0.0 switched default partitioner. To retain the same partitioning behavior as in previous versions, create the producer with the option \"createPartitioner: Partitioners.LegacyPartitioner\". See the migration guide at https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner for details. Silence this warning by setting the environment variable \"KAFKAJS_NO_PARTITIONER_WARNING=1\""}
+
+   ___      _                                    ___   _ _____
+  / __\___ | |_   _ ___  ___ _   _ ___   __   __/ _ \ / |___  |
+ / /  / _ \| | | | / __|/ _ \ | | / __|  \ \ / / | | || |  / /
+/ /__| (_) | | |_| \__ \  __/ |_| \__ \   \ V /| |_| || | / /
+\____/\___/|_|\__, |___/\___|\__,_|___/    \_/  \___(_)_|/_/
+              |___/
+
+             ┬╖ Multiplayer Framework for Node.js ┬╖
+
+≡ƒÆû Consider becoming a Sponsor on GitHub ΓåÆ https://github.com/sponsors/endel
+≡ƒîƒ Give us a star on GitHub ΓåÆ https://github.com/colyseus/colyseus
+Γÿü∩╕Å  Deploy and scale your project on Colyseus Cloud ΓåÆ https://cloud.colyseus.io
+
+Server running on 3000
+WebSocket running on 3000
+Redis: connecting...
+Redis: connected and ready
+Unexpected error POST /auth/login - Expected property name or '}' in JSON at position 1 (line 1 column 2)

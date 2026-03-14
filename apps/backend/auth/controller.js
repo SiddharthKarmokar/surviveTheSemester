@@ -130,6 +130,10 @@ export const loginUser = async (req, res, next) => {
     if(!user){
       return next(new NotFoundError("User not found"));
     }
+    if (!user.passwordHash) {
+      return next(new AuthenticationError("User registered via OTP without a password"));
+    }
+
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if(!isMatch){
       return next(new AuthenticationError("Invalid credentials"));
