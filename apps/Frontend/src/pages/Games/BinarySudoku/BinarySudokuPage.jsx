@@ -170,7 +170,7 @@ export default function BinarySudokuPage() {
     setBrowsingRooms(true);
     setErrorMsg("");
     try {
-      const resp = await fetch(`${BACKEND_URL}/api/games/binarysudoku/rooms`);
+      const resp = await fetch(`${BACKEND_URL}/api/games/binarySudoku/rooms`);
       if (!resp.ok) throw new Error("Could not fetch rooms");
       const data = await resp.json();
       setAvailableRooms(data);

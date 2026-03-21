@@ -137,21 +137,26 @@ export default function Puzzle15Page() {
 
     // Full state sync
     room.onStateChange(state => {
-      const me = state.players.get(room.sessionId);
+      const me = state.players?.get(room.sessionId);
       if (me) {
-        setMyTiles([...me.tiles]);
+        let mt = [];
+        try { mt = me.tiles ? JSON.parse(me.tiles) : []; } catch(e) {}
+        setMyTiles(mt);
         setMyMoves(me.moves);
       }
 
       // Find opponent
-      state.players.forEach((player, id) => {
+      state.players?.forEach((player, id) => {
         if (!player) return;
         if (id !== room.sessionId) {
+          let oppT = [];
+          try { oppT = player.tiles ? JSON.parse(player.tiles) : []; } catch(e) {}
+          
           setOpponentData({
             name: player?.name || 'Opponent',
             moves: player?.moves || 0,
             solved: Boolean(player?.solved),
-            tiles: Array.isArray(player?.tiles) ? [...player.tiles] : [...(player?.tiles || [])],
+            tiles: oppT,
           });
         }
       });
@@ -216,10 +221,9 @@ export default function Puzzle15Page() {
   const createRoom = async () => {
     try {
       setError('');
-      const reservation = await requestSeatReservation('create', 'puzzle15', { playerName });
-      const room = await clientRef.current.consumeSeatReservation(reservation);
+      const room = await clientRef.current.joinOrCreate('puzzle15', { playerName });
       roomRef.current = room;
-      const roomId = room.roomId || reservation.roomId || reservation.room?.roomId;
+      const roomId = room.roomId;
       const link = `${window.location.origin}/puzzle?roomId=${roomId}`;
       setInviteLink(link);
       setScreen('waiting');

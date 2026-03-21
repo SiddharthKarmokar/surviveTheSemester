@@ -28,7 +28,7 @@ async function requestSeatReservation(method, roomNameOrId, payload) {
   // Normalize 0.16/0.17 reservation shape differences.
   if (data && !data.room && data.roomId) {
     data.room = {
-      name: data.name || 'canonGameRoom',
+      name: data.name || 'canon',
       roomId: data.roomId,
       processId: data.processId,
       publicAddress: data.publicAddress,
@@ -39,7 +39,7 @@ async function requestSeatReservation(method, roomNameOrId, payload) {
   if (!data?.room?.name) {
     data.room = {
       ...(data?.room || {}),
-      name: 'canonGameRoom',
+      name: 'canon',
       roomId: data?.room?.roomId || data?.roomId,
       processId: data?.room?.processId || data?.processId,
       publicAddress: data?.room?.publicAddress || data?.publicAddress,
@@ -60,7 +60,7 @@ export class MultiplayerClient {
     try {
       let reservation;
       if (joinAs === "create") {
-         reservation = await requestSeatReservation('create', 'canonGameRoom', options);
+         reservation = await requestSeatReservation('create', 'canon', options);
       } else {
          reservation = await requestSeatReservation('joinById', options.roomId, options);
       }

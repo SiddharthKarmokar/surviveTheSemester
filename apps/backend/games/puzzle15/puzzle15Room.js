@@ -19,7 +19,7 @@ export class Puzzle15Room extends Room {
 
     const tiles = generateShuffledPuzzle();
     const state = new PuzzleGameState();
-    tiles.forEach(t => state.initialTiles.push(t));
+    state.initialTiles = JSON.stringify(tiles);
     this.setState(state);
 
     // Store room creator name in metadata so getAvailableRooms() returns it
@@ -41,7 +41,7 @@ export class Puzzle15Room extends Room {
     player.name = String(options.playerName || "Player").slice(0, 16);
 
     // Give each player their own copy of the starting board
-    this.state.initialTiles.forEach(t => player.tiles.push(t));
+    player.tiles = this.state.initialTiles;
 
     this.state.players.set(client.sessionId, player);
 
@@ -117,10 +117,13 @@ export class Puzzle15Room extends Room {
     const player = this.state.players.get(client.sessionId);
     if (!player || player.solved) return;
 
+    let tilesArr = [];
+    try { tilesArr = JSON.parse(player.tiles); } catch(e) { return; }
+
     // Locate the empty slot (value === 0) on this player's board
     let emptyIdx = -1;
     for (let i = 0; i < 16; i++) {
-      if (player.tiles[i] === 0) { emptyIdx = i; break; }
+      if (tilesArr[i] === 0) { emptyIdx = i; break; }
     }
     if (emptyIdx === -1) return;
 
@@ -128,13 +131,15 @@ export class Puzzle15Room extends Room {
     if (!isAdjacent(tileIndex, emptyIdx)) return;
 
     // Swap tileIndex value with the empty slot
-    const val = player.tiles[tileIndex];
-    player.tiles[tileIndex] = 0;
-    player.tiles[emptyIdx] = val;
+    const val = tilesArr[tileIndex];
+    tilesArr[tileIndex] = 0;
+    tilesArr[emptyIdx] = val;
+    
+    player.tiles = JSON.stringify(tilesArr);
     player.moves++;
 
     // Check whether this player has solved the puzzle
-    if (isSolved(player.tiles)) {
+    if (isSolved(tilesArr)) {
       player.solved = true;
       this.state.phase = "ended";
       this.state.winner = client.sessionId;

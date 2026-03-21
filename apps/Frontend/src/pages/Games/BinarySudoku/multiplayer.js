@@ -62,7 +62,7 @@ async function requestSeatReservation(method, roomIdOrName, payload, config = {}
 
   if (data && !data.room && data.roomId) {
     data.room = {
-      name: data.name || 'binarySudokuRoom',
+      name: data.name || 'binarySudoku',
       roomId: data.roomId,
       processId: data.processId,
       publicAddress: data.publicAddress,
@@ -73,7 +73,7 @@ async function requestSeatReservation(method, roomIdOrName, payload, config = {}
   if (!data?.room?.name) {
     data.room = {
       ...(data?.room || {}),
-      name: 'binarySudokuRoom',
+      name: 'binarySudoku',
       roomId: data?.room?.roomId || data?.roomId,
       processId: data?.room?.processId || data?.processId,
       publicAddress: data?.room?.publicAddress || data?.publicAddress,
@@ -157,7 +157,7 @@ export class BinarySudokuMultiplayer {
       }
 
       const reservation = joinAs === "create"
-        ? await requestSeatReservation('create', 'binarySudokuRoom', options, {
+        ? await requestSeatReservation('create', 'binarySudoku', options, {
             timeoutMs: 12000,
             maxAttempts: 3,
           })

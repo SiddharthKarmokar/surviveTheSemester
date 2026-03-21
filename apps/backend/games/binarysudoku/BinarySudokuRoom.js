@@ -38,12 +38,61 @@ function isValid(boardData, size) {
 }
 
 function createSolution(n) {
-  while (true) {
-    let board = Array.from({ length: n }, () =>
-      Array.from({ length: n }, () => Math.random() > 0.5 ? 1 : 0)
-    );
-    if (isValid(board, n)) return board;
+  let board = Array.from({ length: n }, () => Array(n).fill(""));
+
+  function validLine(arr, size) {
+    let zeros = arr.filter(v => v === 0).length;
+    let ones = arr.filter(v => v === 1).length;
+    if (zeros > size / 2 || ones > size / 2) return false;
+    for (let i = 0; i < size - 2; i++) {
+      if (arr[i] !== "" && arr[i] === arr[i + 1] && arr[i] === arr[i + 2]) return false;
+    }
+    return true;
   }
+
+  function unique(lines) {
+    let set = new Set();
+    for (let line of lines) {
+      if (line.includes("")) continue;
+      let str = line.join("");
+      if (set.has(str)) return false;
+      set.add(str);
+    }
+    return true;
+  }
+
+  function isValidPartial(r, c) {
+    let row = board[r];
+    let col = board.map(row => row[c]);
+    if (!validLine(row, n)) return false;
+    if (!validLine(col, n)) return false;
+    
+    if (!row.includes("") && !unique(board.filter(x => !x.includes("")))) return false;
+    let columns = [];
+    for (let i = 0; i < n; i++) columns.push(board.map(row => row[i]));
+    if (!col.includes("") && !unique(columns.filter(x => !x.includes("")))) return false;
+
+    return true;
+  }
+
+  function solve(r, c) {
+    if (r === n) return true;
+    let nextR = c === n - 1 ? r + 1 : r;
+    let nextC = c === n - 1 ? 0 : c + 1;
+
+    let choices = Math.random() > 0.5 ? [0, 1] : [1, 0];
+    for (let val of choices) {
+      board[r][c] = val;
+      if (isValidPartial(r, c)) {
+        if (solve(nextR, nextC)) return true;
+      }
+      board[r][c] = "";
+    }
+    return false;
+  }
+
+  solve(0, 0);
+  return board;
 }
 
 function createPuzzle(sol, size, difficulty) {

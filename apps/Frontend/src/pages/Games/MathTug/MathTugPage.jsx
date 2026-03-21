@@ -25,6 +25,7 @@ export default function MathTugPage() {
   const p1CharRef = useRef(null);
   const p2CharRef = useRef(null);
   const listenersBoundRef = useRef(false);
+  const autoJoinHandledRef = useRef(false);
   
   const [browsingRooms, setBrowsingRooms] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
@@ -37,8 +38,23 @@ export default function MathTugPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const roomId = params.get('roomId');
-    if (roomId) {
+    if (roomId && !autoJoinHandledRef.current) {
+      const joinGuardKey = `mt-autojoin-${roomId}`;
+      const recentlyHandled = sessionStorage.getItem(joinGuardKey) === '1';
+      if (recentlyHandled) {
+        return;
+      }
+      sessionStorage.setItem(joinGuardKey, '1');
+      autoJoinHandledRef.current = true;
       handleJoinByLink(roomId);
+
+      setTimeout(() => {
+        try {
+          sessionStorage.removeItem(joinGuardKey);
+        } catch {
+          // no-op
+        }
+      }, 8000);
     }
   }, []);
 
@@ -79,7 +95,7 @@ export default function MathTugPage() {
     setBrowsingRooms(true);
     setErrorMsg("");
     try {
-      const resp = await fetch(`${BACKEND_URL}/api/games/mathtug/rooms`);
+      const resp = await fetch(`${BACKEND_URL}/api/games/mathTug/rooms`);
       if (!resp.ok) throw new Error("Could not fetch rooms");
       const data = await resp.json();
       setAvailableRooms(data);
@@ -126,7 +142,7 @@ export default function MathTugPage() {
       setTimer(state.timer);
       setQuestions({ q1: state.q1Str, q2: state.q2Str });
       
-      if (state.phase === "playing" && screen !== "playing") {
+      if (state.phase === "playing") {
         setScreen("playing");
       }
     });

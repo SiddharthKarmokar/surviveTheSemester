@@ -28,7 +28,7 @@ async function requestSeatReservation(method, roomIdOrName, payload) {
 
   if (data && !data.room && data.roomId) {
     data.room = {
-      name: data.name || 'mathTugRoom',
+      name: data.name || 'mathTug',
       roomId: data.roomId,
       processId: data.processId,
       publicAddress: data.publicAddress,
@@ -39,7 +39,7 @@ async function requestSeatReservation(method, roomIdOrName, payload) {
   if (!data?.room?.name) {
     data.room = {
       ...(data?.room || {}),
-      name: 'mathTugRoom',
+      name: 'mathTug',
       roomId: data?.room?.roomId || data?.roomId,
       processId: data?.room?.processId || data?.processId,
       publicAddress: data?.room?.publicAddress || data?.publicAddress,
@@ -71,7 +71,7 @@ export class MathTugMultiplayer {
     try {
       let reservation;
       if (joinAs === "create") {
-         reservation = await requestSeatReservation('create', 'mathTugRoom', options);
+         reservation = await requestSeatReservation('create', 'mathTug', options);
       } else {
          reservation = await requestSeatReservation('joinById', options.roomId, options);
       }

@@ -8,8 +8,7 @@ export class PuzzlePlayer extends Schema {
     super();
     this.name = "";
     this.moves = 0;
-    this.solved = false;
-    this.tiles = new ArraySchema(); // 16 numbers: 1-15 + 0 (empty)
+    this.tiles = ""; // JSON stringified array
   }
 }
 
@@ -17,7 +16,7 @@ defineTypes(PuzzlePlayer, {
   name: "string",
   moves: "number",
   solved: "boolean",
-  tiles: ["number"],
+  tiles: "string",
 });
 
 // ---------------------------------------------------------------------------
@@ -30,8 +29,7 @@ export class PuzzleGameState extends Schema {
     this.phase = "waiting";         // waiting | countdown | game | ended
     this.players = new MapSchema(); // sessionId → PuzzlePlayer
     this.winner = "";               // session ID of winner
-    this.winnerName = "";           // display name of winner
-    this.initialTiles = new ArraySchema(); // same starting board for every player
+    this.initialTiles = ""; // same starting board for every player
     this.countdownEndsAt = 0;       // epoch ms
   }
 }
@@ -41,6 +39,6 @@ defineTypes(PuzzleGameState, {
   players: { map: PuzzlePlayer },
   winner: "string",
   winnerName: "string",
-  initialTiles: ["number"],
+  initialTiles: "string",
   countdownEndsAt: "number",
 });
