@@ -61,7 +61,7 @@ const Dashboard = () => {
     const handlePlayGame = (gameId) => {
         const route = gameRoutes[gameId];
         if (route) {
-            navigate(route);
+            window.location.href = route;
         } else {
             console.warn("Unknown game:", gameId);
         }

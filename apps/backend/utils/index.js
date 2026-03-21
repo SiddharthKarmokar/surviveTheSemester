@@ -23,7 +23,10 @@ export const SWAGGER_UI_OPTIONS = {
     },
     servers: [
       {
-        url: "http://localhost:3000"
+        url: "http://localhost:3000", 
+      },
+      {
+        url: process.env.SERVER_URL, 
       }
     ]
   },
