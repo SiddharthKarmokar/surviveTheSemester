@@ -90,7 +90,7 @@ const Dashboard = () => {
         }
         return (
             <>
-                <TopUserRow />
+                {/* <TopUserRow /> */}
                 <GameCardGrid onPlayGame={handlePlayGame} />
             </>
         );
