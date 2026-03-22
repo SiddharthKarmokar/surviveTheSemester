@@ -1,119 +1,84 @@
-/* dashboard.css */
 :root {
-  /* MD3 Color System (Landing Page Match) */
-  --md-sys-color-background: #000000;
-  --md-sys-color-on-background: #ffffff;
-  
-  --md-sys-color-surface: #000000;
+  --dashboard-bg: #000000;
+  --dashboard-surface: #050505;
+  --dashboard-surface-2: #0a0a0a;
+  --dashboard-surface-3: #101010;
+  --dashboard-line: #171717;
+  --dashboard-line-strong: #242424;
+  --dashboard-text: #ffffff;
+  --dashboard-muted: #8e8e8e;
+  --dashboard-accent: #f0fd63;
+  --dashboard-radius: 28px;
+  --dashboard-gap: 18px;
+  --dashboard-padding: 22px;
+  --md-sys-color-surface-container: #050505;
   --md-sys-color-on-surface: #ffffff;
-  --md-sys-color-on-surface-variant: #bbbbbb; /* clean light gray for secondary text */
-  
-  --md-sys-color-surface-container-lowest: #000000;
-  --md-sys-color-surface-container-low: #000000;
-  --md-sys-color-surface-container: #000000; 
-  --md-sys-color-surface-container-high: #111111; /* Keep slightly elevated for avatars */
-  --md-sys-color-surface-container-highest: #1a1a1a;
-  
-  --md-sys-color-primary: #A1FF4F; /* Neon green from Navbar */
-  --md-sys-color-on-primary: #000000;
-  --md-sys-color-primary-container: #A1FF4F; /* Active containers should pop with brand green */
-  --md-sys-color-on-primary-container: #000000;
-  
-  --md-sys-color-secondary-container: #ffffff;
-  --md-sys-color-on-secondary-container: #000000;
-  
-  --md-sys-color-outline: #333333;
-  --md-sys-color-outline-variant: #1a1a1a;
-  
-  --md-sys-color-state-hover: rgba(226, 226, 230, 0.08);
-  --md-sys-color-state-pressed: rgba(226, 226, 230, 0.12);
-
-  /* MD3 Elevation System (Shadows & Surface Dimming) */
-  /* In dark mode, MD3 relies more on lightness than shadow, but we include subtle shadows */
-  --md-sys-elevation-level0: none;
-  --md-sys-elevation-level1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-
-  /* MD3 Shape System */
-  --md-sys-shape-corner-none: 0px;
-  --md-sys-shape-corner-extra-small: 4px;
-  --md-sys-shape-corner-small: 8px;
-  --md-sys-shape-corner-medium: 12px;
-  --md-sys-shape-corner-large: 16px;
-  --md-sys-shape-corner-extra-large: 28px;
-  --md-sys-shape-corner-full: 9999px;
-
-  /* MD3 Motion System */
+  --md-sys-color-on-surface-variant: #a0a0a0;
+  --md-sys-color-outline: #2a2a2a;
+  --md-sys-color-outline-variant: #171717;
   --md-sys-motion-duration-short: 150ms;
-  --md-sys-motion-duration-medium: 250ms;
-  --md-sys-motion-duration-long: 300ms;
-  
-  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
-  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0.0, 1, 1.0);
-  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0.0, 0.0, 0, 1.0);
-  
-  /* Layout Spacing */
-  --md-layout-gap: 24px;
-  --md-layout-padding: 24px;
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-elevation-level1: 0px 8px 22px rgba(0, 0, 0, 0.28);
+  --md-sys-elevation-level2: 0px 18px 40px rgba(0, 0, 0, 0.34);
+  --md-sys-shape-corner-medium: 16px;
+  --md-sys-shape-corner-full: 999px;
 }
 
 body {
   margin: 0;
-  background-color: var(--md-sys-color-background);
-  color: var(--md-sys-color-on-background);
-  /* Use app designated fonts */
-  font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif; 
+  background-color: var(--dashboard-bg);
+  color: var(--dashboard-text);
+  font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
 }
 
-/* Enforce Neue Montreal on all elements inside the dashboard */
+.dashboard-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.03), transparent 26%),
+    var(--dashboard-bg);
+}
+
 .dashboard-container * {
   font-family: 'Neue Montreal', "Segoe UI", Arial, sans-serif;
 }
 
-/* Ensure Icons do not get overridden */
-.dashboard-container .material-icons,
-.dashboard-container .material-symbols-outlined,
-.dashboard-container mdui-icon {
-  font-family: 'Material Symbols Outlined', 'Material Icons', system-ui !important;
-}
-
-/* Base Dashboard Grid Layout */
 .dashboard-container {
   display: grid;
-  grid-template-columns: 280px 1fr 320px;
-  min-height: 100vh;
+  grid-template-columns: 280px minmax(0, 1fr) 340px;
+  gap: var(--dashboard-gap);
   width: 100%;
-  margin-top: 50px; /* Offset for absolute navbar if any */
+  padding: 88px var(--dashboard-gap) var(--dashboard-gap);
+  margin-top: 35px;
+  box-sizing: border-box;
+  align-items: start;
 }
 
 .dashboard-main-content {
-  display: flex;
-  flex-direction: column;
-  padding: var(--md-layout-padding);
-  gap: var(--md-layout-gap);
-  overflow-y: auto;
-  background-color: var(--md-sys-color-background);
+  display: grid;
+  gap: var(--dashboard-gap);
+  align-content: start;
+  min-width: 0;
 }
 
-@media (max-width: 1200px) {
+.dashboard-main-content > * {
+  min-width: 0;
+}
+
+@media (max-width: 1280px) {
   .dashboard-container {
-      grid-template-columns: 240px 1fr 280px;
+    grid-template-columns: 250px minmax(0, 1fr) 300px;
   }
 }
 
 @media (max-width: 1024px) {
   .dashboard-container {
-      grid-template-columns: 240px 1fr;
+    grid-template-columns: 1fr;
+    padding-top: 84px;
   }
 }
 
 @media (max-width: 768px) {
   .dashboard-container {
-      grid-template-columns: 1fr;
-  }
-  .dashboard-main-content {
-      padding: 16px;
+    padding: 76px 14px 14px;
   }
 }
-

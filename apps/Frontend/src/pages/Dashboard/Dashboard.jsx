@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './dashboard.css';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import TopUserRow from '../../components/TopUserRow/TopUserRow';
 import GameCardGrid from '../../components/GameCardGrid/GameCardGrid';
 import RightPanel from '../../components/RightPanel/RightPanel';
 import Navbar from '../../components/Navbar';
@@ -50,6 +49,17 @@ const Dashboard = () => {
         }
     }, [activeTab, hasUnreadNotifications]);
 
+    React.useEffect(() => {
+        const handleDashboardTab = (event) => {
+            if (event?.detail) {
+                setActiveTab(event.detail);
+            }
+        };
+
+        window.addEventListener('dashboard:set-tab', handleDashboardTab);
+        return () => window.removeEventListener('dashboard:set-tab', handleDashboardTab);
+    }, []);
+
     const gameRoutes = {
         twoPlayer: "/campusFighter",
         puzzle: "/puzzle",
@@ -61,7 +71,7 @@ const Dashboard = () => {
     const handlePlayGame = (gameId) => {
         const route = gameRoutes[gameId];
         if (route) {
-            window.location.href = route;
+            window.open(route, '_blank', 'noopener,noreferrer');
         } else {
             console.warn("Unknown game:", gameId);
         }
@@ -85,14 +95,13 @@ const Dashboard = () => {
         }
         return (
             <>
-                <TopUserRow />
                 <GameCardGrid onPlayGame={handlePlayGame} />
             </>
         );
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <div className="dashboard-shell">
             <Navbar /> 
             <div className="dashboard-container">
                 <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} hasUnreadNotifications={hasUnreadNotifications} />

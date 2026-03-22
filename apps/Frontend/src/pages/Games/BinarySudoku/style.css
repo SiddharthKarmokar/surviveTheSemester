@@ -1,267 +1,281 @@
 .bski-ui {
-	min-height: 100vh;
-	color: #f8fafc;
-	background:
-		radial-gradient(circle at 12% 10%, rgba(34, 197, 94, 0.18), transparent 30%),
-		radial-gradient(circle at 88% 82%, rgba(14, 165, 233, 0.2), transparent 34%),
-		linear-gradient(145deg, #0b1324 0%, #132033 50%, #172554 100%);
+    min-height: 100vh;
+    color: #fff;
+    background: #000;
+    font-family: "Neue Montreal", "Segoe UI", sans-serif;
+    position: relative;
+}
+
+.bski-ui::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(240, 253, 99, 0.08), transparent 24%),
+        radial-gradient(circle at 85% 80%, rgba(240, 253, 99, 0.04), transparent 20%);
+    pointer-events: none;
 }
 
 .bski-ui .full-screen {
-	min-height: 100vh;
-	box-sizing: border-box;
-	padding: 24px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
 }
 
 .bski-ui .flex-center-col {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .bs-title {
-	margin-bottom: 1rem;
-	font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-bottom: 1rem;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    letter-spacing: -0.04em;
 }
 
 .bs-subtitle {
-	margin-bottom: 1.25rem;
-	color: #dbeafe;
+    margin-bottom: 1.25rem;
+    color: #fff;
 }
 
 .bs-card {
-	background: rgba(9, 16, 30, 0.8);
-	border: 1px solid #334155;
-	border-radius: 12px;
-	padding: 16px;
-	box-shadow: 0 12px 30px rgba(2, 6, 23, 0.2);
+    background: #050505;
+    border: 1px solid #171717;
+    border-radius: 28px;
+    padding: 18px;
 }
 
 .menu-controls.bs-card {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	width: min(92vw, 420px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(92vw, 440px);
 }
 
 .bs-input,
 .bs-select {
-	border: 1px solid #334155;
-	border-radius: 8px;
-	background: #0b1220;
-	color: #f8fafc;
-	padding: 10px 12px;
+    border: 1px solid #242424;
+    border-radius: 999px;
+    background: #0d0d0d;
+    color: #fff;
+    padding: 12px 14px;
+    font: inherit;
 }
 
 .bs-input {
-	width: 100%;
+    width: 100%;
 }
 
 .bs-inline-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: #b8b8b8;
 }
 
-.bski-ui .menu-btn {
-	border: 0;
-	border-radius: 8px;
-	padding: 10px 14px;
-	color: #f8fafc;
-	background: #2563eb;
-	cursor: pointer;
+.bski-ui .menu-btn,
+.bs-join-btn,
+.bs-copy-btn {
+    border: 1px solid #242424;
+    border-radius: 999px;
+    padding: 11px 14px;
+    color: #000;
+    background: #f0fd63;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
 }
 
-.bski-ui .menu-btn:hover {
-	background: #1d4ed8;
+.bski-ui .menu-btn:hover,
+.bs-join-btn:hover,
+.bs-copy-btn:hover {
+    background: #e8f55f;
 }
 
 .bski-ui .menu-btn:disabled,
 .bski-ui .bs-join-btn:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .bs-danger-btn {
-	background: #dc2626 !important;
+    background: transparent !important;
+    color: #fff !important;
 }
 
 .bs-danger-btn:hover {
-	background: #b91c1c !important;
+    background: #101010 !important;
 }
 
 .bs-error {
-	color: #fecaca;
-	font-weight: 700;
+    color: #fff;
+    font-weight: 700;
+    background: #0d0d0d;
+    border: 1px solid #242424;
+    border-radius: 18px;
+    padding: 10px 14px;
 }
 
 .bs-muted {
-	color: #bfd4ff;
+    color: #a7a7a7;
 }
 
 .bs-room-entry {
-	width: min(92vw, 440px);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	text-align: left;
-	gap: 14px;
-	padding: 14px;
-	border: 1px solid #334155;
-	border-radius: 12px;
-	background: rgba(9, 16, 30, 0.78);
-	margin-bottom: 10px;
-}
-
-.bs-join-btn {
-	border: 0;
-	border-radius: 8px;
-	padding: 8px 12px;
-	color: #f8fafc;
-	background: #0ea5e9;
-	cursor: pointer;
+    width: min(92vw, 440px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid #171717;
+    border-radius: 22px;
+    background: #050505;
+    margin-bottom: 10px;
 }
 
 .bs-invite-box {
-	margin-top: 1.5rem;
-	width: min(92vw, 540px);
+    margin-top: 1.5rem;
+    width: min(92vw, 540px);
 }
 
 .bs-invite-label {
-	margin: 0 0 8px;
-	font-weight: 700;
+    margin: 0 0 8px;
+    font-weight: 700;
+    color: #fff;
 }
 
 .bs-invite-row {
-	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
-	justify-content: center;
-}
-
-.bs-copy-btn {
-	border: 0;
-	border-radius: 8px;
-	padding: 10px 14px;
-	color: #f8fafc;
-	background: #16a34a;
-	cursor: pointer;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .bs-copy-status {
-	margin: 8px 0 0;
-	color: #86efac;
-	font-weight: 700;
+    margin: 8px 0 0;
+    color: #f0fd63;
+    font-weight: 700;
 }
 
 .bs-top-gap {
-	margin-top: 1rem;
+    margin-top: 1rem;
 }
 
 .bs-top-gap-sm {
-	margin-top: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .bs-top-gap-lg {
-	margin-top: 2rem;
+    margin-top: 2rem;
 }
 
 .bs-game-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 24px;
-	position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    position: relative;
 }
 
 .bs-panel {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	border: 1px solid #334155;
-	border-radius: 12px;
-	background: rgba(9, 16, 30, 0.78);
-	padding: 16px;
-	min-width: min(92vw, 360px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #171717;
+    border-radius: 28px;
+    background: #050505;
+    padding: 18px;
+    min-width: min(92vw, 360px);
+}
+
+.bs-panel h2 {
+    margin: 0 0 16px;
+    font-size: 24px;
 }
 
 .game-board {
-	display: grid;
-	gap: 6px;
-	justify-content: center;
+    display: grid;
+    gap: 6px;
+    justify-content: center;
 }
 
 .cell {
-	width: 50px;
-	height: 50px;
-	border: 1px solid #334155;
-	border-radius: 6px;
-	font-size: 1.2rem;
-	font-weight: 700;
-	color: #e2e8f0;
-	background: #0f172a;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #242424;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .cell.fixed {
-	background: #334155;
-	color: #f8fafc;
-	cursor: not-allowed;
+    background: #f0fd63;
+    color: #000;
+    border-color: #f0fd63;
+    cursor: not-allowed;
 }
 
 .bs-status {
-	margin-top: 14px;
-	font-size: 1.05rem;
-	font-weight: 700;
+    margin-top: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
 }
 
-.bs-timer-value {
-	color: #facc15;
+.bs-timer-value,
+.bs-completed {
+    color: #f0fd63;
 }
 
 .bs-completed {
-	margin-top: 10px;
-	color: #4ade80;
-	font-weight: 800;
-	font-size: 1.1rem;
+    margin-top: 10px;
+    font-weight: 800;
+    font-size: 1.1rem;
 }
 
 .bski-ui .overlay {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	background: rgba(2, 6, 23, 0.82);
-	z-index: 30;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.82);
+    z-index: 30;
 }
 
 .bs-message {
-	font-size: clamp(1.5rem, 4vw, 2.8rem);
-	text-align: center;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    text-align: center;
+    max-width: 520px;
 }
 
 @media (max-width: 900px) {
-	.bs-game-container {
-		flex-direction: column;
-		align-items: center;
-	}
+    .bs-game-container {
+        flex-direction: column;
+        align-items: center;
+    }
 
-	.bs-panel {
-		width: min(92vw, 480px);
-		min-width: 0;
-	}
+    .bs-panel {
+        width: min(92vw, 480px);
+        min-width: 0;
+    }
 
-	.cell {
-		width: 42px;
-		height: 42px;
-	}
+    .cell {
+        width: 42px;
+        height: 42px;
+    }
 }

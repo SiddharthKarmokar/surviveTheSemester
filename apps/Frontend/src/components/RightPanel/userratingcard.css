@@ -1,19 +1,11 @@
-/* userratingcard.css */
 .user-rating-container {
-    background-color: var(--md-sys-color-surface-container);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-medium);
+    background: linear-gradient(180deg, #070707, #040404);
+    border: 1px solid var(--dashboard-line);
+    border-radius: var(--dashboard-radius);
     padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    box-shadow: var(--md-sys-elevation-level1);
-    transition: box-shadow var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
-    cursor: default;
-}
-
-.user-rating-container:hover {
-    box-shadow: var(--md-sys-elevation-level2);
+    gap: 14px;
 }
 
 .user-rating-header {
@@ -22,26 +14,48 @@
     align-items: center;
 }
 
+.user-rating-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-rating-lottie {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.user-rating-lottie > div,
+.user-rating-lottie svg {
+    width: 28px !important;
+    height: 28px !important;
+}
+
 .user-rating-title {
     margin: 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--md-sys-color-on-surface-variant);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dashboard-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.12em;
 }
 
 .user-rating-score {
     margin: 0;
-    font-size: 48px;
+    font-size: 62px;
     font-weight: 700;
-    color: var(--md-sys-color-on-surface);
-    line-height: 1;
+    color: var(--dashboard-text);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
 }
 
 .user-rating-label {
     margin: 0;
     font-size: 14px;
-    color: var(--md-sys-color-primary); /* Use primary for positive feedback */
-    font-weight: 500;
+    color: var(--dashboard-accent);
+    font-weight: 600;
 }

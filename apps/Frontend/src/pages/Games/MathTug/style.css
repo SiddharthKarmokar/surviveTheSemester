@@ -1,331 +1,486 @@
 .mathtug-ui {
-	min-height: 100vh;
-	color: #eef2ff;
-	background:
-		radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.25), transparent 30%),
-		radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.2), transparent 35%),
-		linear-gradient(145deg, #0f172a 0%, #1e293b 45%, #111827 100%);
+  min-height: 100vh;
+  color: #fff;
+  font-family: "Neue Montreal", "Segoe UI", sans-serif;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.mathtug-ui::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgba(255, 72, 0, 0.08), transparent 24%),
+    radial-gradient(circle at 85% 80%, rgba(255, 72, 0, 0.04), transparent 20%);
+  pointer-events: none;
 }
 
 .mathtug-ui .full-screen {
-	min-height: 100vh;
-	padding: 24px;
-	box-sizing: border-box;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .mathtug-ui .flex-center-col {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .mathtug-title {
-	font-size: clamp(2rem, 4vw, 3rem);
-	margin-bottom: 1.5rem;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  margin: 0 0 0.75rem;
+  color: #fff;
 }
 
 .mathtug-subtitle {
-	margin-bottom: 1rem;
-	color: #dbeafe;
+  margin: 0 0 1rem;
+  color: #fff;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.mathtug-subcopy,
+.mathtug-muted,
+.mathtug-invite-label,
+.mathtug-panel-tag,
+.mathtug-question-tag {
+  color: #b8b8b8;
+}
+
+.mathtug-eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ff4800;
+}
+
+.mathtug-card {
+  width: min(560px, 100%);
+  padding: 32px;
+  border-radius: 28px;
+  border: 1px solid #1f1f1f;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.mathtug-hero-card,
+.mathtug-browser-card,
+.mathtug-waiting-card,
+.mathtug-end-card {
+  text-align: center;
+}
+
+.mathtug-action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.mathtug-symbol-row {
+  display: inline-flex;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.mathtug-symbol-row span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  border: 1px solid #262626;
+  background: #0c0c0c;
+  color: #ff4800;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.mathtug-symbol-row span:nth-child(2) {
+  color: #ffffff;
+}
+
+.mathtug-symbol-row span:nth-child(3) {
+  color: #fff;
 }
 
 .mathtug-input {
-	width: 100%;
-	max-width: 360px;
-	padding: 10px 12px;
-	border-radius: 8px;
-	border: 1px solid #334155;
-	background: #0b1220;
-	color: #f8fafc;
+  width: 100%;
+  max-width: 360px;
+  padding: 14px 16px;
+  border-radius: 999px;
+  border: 1px solid #262626;
+  background: #111;
+  color: #fff;
 }
 
 .mathtug-name-input {
-	margin-bottom: 1rem;
-	text-align: center;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .mathtug-ui .menu-btn {
-	margin-top: 0.75rem;
-	border: 0;
-	border-radius: 8px;
-	padding: 10px 16px;
-	color: #f8fafc;
-	background: #2563eb;
-	cursor: pointer;
+  margin-top: 0.75rem;
+  border: 1px solid #262626;
+  border-radius: 999px;
+  padding: 13px 18px;
+  color: #fff;
+  background: #101010;
+  cursor: pointer;
+  font-weight: 600;
+  transition: none;
 }
 
-.mathtug-ui .menu-btn:hover {
-	background: #1d4ed8;
+.mathtug-ui .menu-btn:hover,
+.mathtug-join-btn:hover,
+.mathtug-copy-btn:hover,
+.mathtug-ui .control-panel button:hover {
+  background: #151515;
 }
 
-.mathtug-ui .menu-btn:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
+.mathtug-ui .menu-btn:disabled,
+.mathtug-join-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mathtug-primary-btn {
+  background: #ff4800;
+  color: #000;
+  border-color: #ff4800 !important;
 }
 
 .mathtug-danger-btn {
-	background: #dc2626 !important;
+  background: transparent !important;
+  color: #fff !important;
 }
 
 .mathtug-danger-btn:hover {
-	background: #b91c1c !important;
+  background: #111 !important;
 }
 
 .mathtug-error {
-	color: #fca5a5;
-	font-weight: 700;
-}
-
-.mathtug-muted {
-	color: #bfdbfe;
+  color: #fff;
+  font-weight: 700;
+  background: #0c0c0c;
+  border: 1px solid #2b1e15;
+  border-radius: 18px;
+  padding: 10px 14px;
 }
 
 .mathtug-room-entry {
-	width: min(92vw, 420px);
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 16px;
-	margin-bottom: 10px;
-	padding: 14px;
-	border: 1px solid #334155;
-	border-radius: 12px;
-	background: rgba(15, 23, 42, 0.8);
-	text-align: left;
+  width: min(92vw, 420px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  padding: 16px 18px;
+  border: 1px solid #1f1f1f;
+  border-radius: 20px;
+  background: #080808;
+  text-align: left;
+}
+
+.mathtug-join-btn,
+.mathtug-copy-btn,
+.mathtug-ui .control-panel button {
+  border: 1px solid #262626;
+  border-radius: 999px;
+  padding: 10px 16px;
+  color: #fff;
+  background: #101010;
+  cursor: pointer;
 }
 
 .mathtug-join-btn {
-	border: 0;
-	border-radius: 8px;
-	padding: 8px 12px;
-	color: #f8fafc;
-	background: #16a34a;
-	cursor: pointer;
-}
-
-.mathtug-join-btn:disabled {
-	opacity: 0.45;
-	cursor: not-allowed;
-}
-
-.mathtug-invite-box {
-	margin-top: 1.5rem;
-	border: 1px solid #334155;
-	border-radius: 12px;
-	padding: 16px;
-	background: rgba(2, 6, 23, 0.75);
-}
-
-.mathtug-invite-label {
-	margin: 0 0 10px;
-	font-weight: 700;
-}
-
-.mathtug-invite-row {
-	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
-	justify-content: center;
+  color: #ff4800;
 }
 
 .mathtug-copy-btn {
-	border: 0;
-	border-radius: 8px;
-	padding: 10px 14px;
-	color: #f8fafc;
-	background: #0284c7;
-	cursor: pointer;
+  color: #ff4800;
+}
+
+.mathtug-invite-box {
+  margin-top: 1.5rem;
+  border: 1px solid #1f1f1f;
+  border-radius: 22px;
+  padding: 16px;
+  background: #080808;
+}
+
+.mathtug-invite-label {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.mathtug-invite-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .mathtug-top-gap {
-	margin-top: 1rem !important;
+  margin-top: 1rem !important;
 }
 
 .mathtug-top-gap-lg {
-	margin-top: 2rem !important;
+  margin-top: 2rem !important;
 }
 
 .mathtug-ui .game-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .mathtug-ui .game-header {
-	display: grid;
-	grid-template-columns: 1fr auto 1fr;
-	gap: 12px;
-	align-items: center;
-	padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
 }
 
-.mathtug-ui .player-panel {
-	border: 1px solid #334155;
-	border-radius: 10px;
-	background: rgba(15, 23, 42, 0.75);
-	padding: 12px;
+.mathtug-ui .player-panel,
+.mathtug-ui .control-panel {
+  border: 1px solid #1f1f1f;
+  border-radius: 22px;
+  background: #070707;
+  padding: 16px 18px;
+}
+
+.mathtug-ui .player-panel h3,
+.mathtug-ui .score {
+  margin: 0;
+}
+
+.mathtug-ui .score {
+  margin-top: 6px;
+  font-weight: 700;
+  color: #ff4800;
 }
 
 .mathtug-ui .timer-box {
-	border: 1px solid #0ea5e9;
-	border-radius: 12px;
-	padding: 8px 18px;
-	background: rgba(14, 165, 233, 0.12);
+  border: 1px solid #2b1e15;
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: #070707;
+  text-align: center;
+}
+
+.mathtug-timer-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ff4800;
+  margin-bottom: 2px;
 }
 
 .mathtug-ui #timer {
-	font-size: 1.5rem;
-	font-weight: 800;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ff4800;
 }
 
 .mathtug-ui .game-area {
-	position: relative;
-	width: min(92vw, 720px);
-	height: 220px;
-	margin: 0 auto;
+  position: relative;
+  width: min(92vw, 720px);
+  height: 220px;
+  margin: 0 auto;
+  border-radius: 36px;
+  background: #050505;
+  border: 1px solid #1f1f1f;
+  overflow: hidden;
+}
+
+.mathtug-equation-strip {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  right: 24px;
+  color: #2e2e2e;
+  font-size: 0.9rem;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .mathtug-ui .ground {
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 14px;
-	height: 10px;
-	border-radius: 999px;
-	background: #475569;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  height: 16px;
+  border-radius: 999px;
+  background: #111;
 }
 
 .mathtug-ui .rope {
-	position: absolute;
-	left: 120px;
-	right: 120px;
-	top: 102px;
-	height: 8px;
-	border-radius: 999px;
-	background: #f59e0b;
+  position: absolute;
+  left: 120px;
+  right: 120px;
+  top: 102px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ff4800;
 }
 
 .mathtug-ui .flag {
-	position: absolute;
-	top: 74px;
-	width: 20px;
-	height: 50px;
-	border-radius: 3px;
-	background: #ef4444;
-	transition: left 0.2s ease;
+  position: absolute;
+  top: 74px;
+  width: 22px;
+  height: 54px;
+  border-radius: 4px;
+  background: #ff4800;
+  transition: left 0.2s ease;
 }
 
 .mathtug-ui .character {
-	position: absolute;
-	top: 114px;
-	font-size: 3rem;
-	transition: transform 0.2s ease;
+  position: absolute;
+  top: 114px;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #000;
+  transition: transform 0.2s ease;
+  background: #ffffff;
 }
 
 .mathtug-ui .p1-char {
-	left: 80px;
+  left: 80px;
 }
 
 .mathtug-ui .p2-char {
-	right: 80px;
+  right: 80px;
+  background: #ff4800;
 }
 
 .mathtug-ui .controls {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 14px;
-	width: min(92vw, 720px);
-	margin: 10px auto 0;
-}
-
-.mathtug-ui .control-panel {
-	border: 1px solid #334155;
-	border-radius: 12px;
-	background: rgba(15, 23, 42, 0.82);
-	padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: min(92vw, 720px);
+  margin: 10px auto 0;
 }
 
 .mathtug-ui .question-box {
-	margin-bottom: 10px;
-	font-size: 1.3rem;
-	font-weight: 700;
+  margin-bottom: 10px;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.mathtug-question-tag {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #ff4800;
 }
 
 .mathtug-ui .control-panel form {
-	display: flex;
-	gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .mathtug-ui .control-panel input {
-	flex: 1;
-	min-width: 0;
-	padding: 10px;
-	border-radius: 8px;
-	border: 1px solid #334155;
-	background: #0b1220;
-	color: #f8fafc;
-}
-
-.mathtug-ui .control-panel button {
-	border: 0;
-	border-radius: 8px;
-	padding: 10px 14px;
-	color: #f8fafc;
-	background: #16a34a;
-	cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid #262626;
+  background: #111;
+  color: #fff;
 }
 
 .mathtug-ui .disabled-panel {
-	opacity: 0.6;
+  opacity: 0.62;
 }
 
 .mathtug-ui .overlay {
-	position: fixed;
-	inset: 0;
-	display: none;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	background: rgba(2, 6, 23, 0.85);
-	z-index: 100;
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 100;
 }
 
 .mathtug-ui .overlay.active {
-	display: flex;
+  display: flex;
 }
 
 .mathtug-ui .message {
-	font-size: clamp(1.4rem, 3vw, 2.2rem);
-	font-weight: 800;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #fff;
+}
+
+.mathtug-sparkle {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  border: 1px solid #242424;
+  background: #111;
+}
+
+.mathtug-panel-tag {
+  margin: 0 0 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 @media (max-width: 768px) {
-	.mathtug-ui .game-header {
-		grid-template-columns: 1fr;
-	}
+  .mathtug-card {
+    padding: 24px;
+    border-radius: 24px;
+  }
 
-	.mathtug-ui .game-area {
-		height: 180px;
-	}
+  .mathtug-ui .game-header {
+    grid-template-columns: 1fr;
+  }
 
-	.mathtug-ui .rope {
-		left: 80px;
-		right: 80px;
-		top: 86px;
-	}
+  .mathtug-ui .game-area {
+    height: 180px;
+  }
 
-	.mathtug-ui .p1-char {
-		left: 35px;
-	}
+  .mathtug-ui .rope {
+    left: 80px;
+    right: 80px;
+    top: 86px;
+  }
 
-	.mathtug-ui .p2-char {
-		right: 35px;
-	}
+  .mathtug-ui .p1-char {
+    left: 35px;
+  }
 
-	.mathtug-ui .controls {
-		grid-template-columns: 1fr;
-	}
+  .mathtug-ui .p2-char {
+    right: 35px;
+  }
+
+  .mathtug-ui .controls {
+    grid-template-columns: 1fr;
+  }
 }

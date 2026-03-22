@@ -1,32 +1,101 @@
-/* streakcalendar.css */
 .streak-calendar-container {
-    background-color: var(--md-sys-color-surface-container);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-medium);
+    background: linear-gradient(180deg, #0b0b0b, #040404);
+    border: 1px solid var(--dashboard-line);
+    border-radius: var(--dashboard-radius);
     padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    box-shadow: var(--md-sys-elevation-level1);
+    gap: 18px;
 }
 
 .streak-header-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 16px;
+}
+
+.streak-heading-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.streak-fire-badge {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.streak-fire-badge > div,
+.streak-fire-badge svg {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.streak-fire-badge span {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.streak-kicker {
+    margin: 0 0 6px;
+    color: var(--dashboard-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
 }
 
 .streak-title {
     margin: 0;
-    font-size: 16px;
+    font-size: 28px;
     font-weight: 700;
-    color: var(--md-sys-color-on-surface);
+    color: var(--dashboard-text);
+    letter-spacing: -0.05em;
 }
 
 .streak-timer {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--md-sys-color-on-surface-variant);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dashboard-accent);
+}
+
+.streak-month-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--dashboard-line);
+    border-radius: 18px;
+    background: #080808;
+}
+
+.streak-month-label {
+    color: var(--dashboard-text);
+    font-weight: 600;
+}
+
+.streak-month-btn {
+    border: 1px solid var(--dashboard-line);
+    background: #111;
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.streak-month-btn:hover {
+    background: #151515;
+}
+
+.streak-month-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 .calendar-weekdays {
@@ -35,14 +104,14 @@
     text-align: center;
     font-size: 12px;
     font-weight: 600;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--dashboard-muted);
     margin-bottom: 8px;
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
+    gap: 8px;
 }
 
 .calendar-day-wrapper {
@@ -54,66 +123,44 @@
 .calendar-day {
     width: 100%;
     height: 100%;
-    background-color: var(--md-sys-color-surface-container-high);
-    border-radius: var(--md-sys-shape-corner-small);
+    background-color: #101010;
+    border: 1px solid var(--dashboard-line);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--md-sys-color-on-surface-variant);
-    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard), 
-                background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dashboard-muted);
     cursor: default;
     position: relative;
 }
 
-.calendar-day:hover {
-    transform: translateY(-2px);
-    background-color: var(--md-sys-color-surface-container-highest);
-}
-
 .calendar-day.day-active {
-    background-color: rgba(161, 255, 79, 0.1); /* Primary color low opacity */
-    color: var(--md-sys-color-on-surface);
-}
-
-.calendar-day.day-active:hover {
-    background-color: rgba(161, 255, 79, 0.15);
+    color: #fff;
+    border-color: #2a2a2a;
 }
 
 .calendar-day.day-streak {
-    background-color: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-on-primary-container);
-}
-
-.calendar-day.day-streak:hover {
-    background-color: var(--md-sys-color-primary);
+    background-color: #101010;
+    border-color: #2a2a2a;
+    color: inherit;
+    font-size: 16px;
 }
 
 .calendar-day.day-missed {
-    /* Base color is same, but dot is added below */
-}
-
-.day-streak-icon {
-    position: absolute;
-    top: -8px;
-    right: -6px;
-    font-size: 12px;
-    line-height: 1;
-    z-index: 2;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+    color: #fff;
 }
 
 .day-missed-dot {
     position: absolute;
-    bottom: 2px;
+    bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    background-color: #ff3b30; /* Subdued red */
-    border-radius: var(--md-sys-shape-corner-full);
+    width: 5px;
+    height: 5px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
 }
 
 .calendar-day-empty {

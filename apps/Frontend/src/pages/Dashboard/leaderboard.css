@@ -13,6 +13,26 @@
     align-items: center;
 }
 
+.leaderboard-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.leaderboard-header-lottie {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leaderboard-header-lottie > div,
+.leaderboard-header-lottie svg {
+    width: 34px !important;
+    height: 34px !important;
+}
+
 .leaderboard-title {
     margin: 0;
     font-size: 28px;
@@ -93,6 +113,23 @@
     font-weight: 800;
     color: var(--md-sys-color-on-surface-variant);
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leaderboard-rank-lottie {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leaderboard-rank-lottie > div,
+.leaderboard-rank-lottie svg {
+    width: 28px !important;
+    height: 28px !important;
 }
 
 /* Podium Colors */

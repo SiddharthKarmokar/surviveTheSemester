@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Lottie from 'lottie-react';
 import './leaderboard.css';
+
+const LEADERBOARD_LOTTIE_URL = 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3c6/lottie.json';
+const PODIUM_LOTTIES = {
+    1: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f947/lottie.json',
+    2: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f948/lottie.json',
+    3: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f949/lottie.json'
+};
 
 // Dummy data for simulation
 const globalData = [
@@ -21,6 +29,48 @@ const friendsData = [
 const Leaderboard = () => {
     const [view, setView] = useState('global'); // 'global' or 'friends'
     const user = useSelector((state) => state.user.currentUser);
+    const [headerAnimation, setHeaderAnimation] = useState(null);
+    const [podiumAnimations, setPodiumAnimations] = useState({});
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadAnimations = async () => {
+            try {
+                const headerResponse = await fetch(LEADERBOARD_LOTTIE_URL);
+                if (headerResponse.ok) {
+                    const headerData = await headerResponse.json();
+                    if (isMounted) {
+                        setHeaderAnimation(headerData);
+                    }
+                }
+            } catch {
+                // fallback handled in render
+            }
+
+            const entries = await Promise.all(
+                Object.entries(PODIUM_LOTTIES).map(async ([rank, url]) => {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) return [rank, null];
+                        const data = await response.json();
+                        return [rank, data];
+                    } catch {
+                        return [rank, null];
+                    }
+                })
+            );
+
+            if (isMounted) {
+                setPodiumAnimations(Object.fromEntries(entries));
+            }
+        };
+
+        loadAnimations();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const baseData = view === 'global' ? globalData : friendsData;
     
@@ -35,10 +85,21 @@ const Leaderboard = () => {
             : u
     );
 
+    const podiumFallback = useMemo(() => ({
+        1: '🥇',
+        2: '🥈',
+        3: '🥉'
+    }), []);
+
     return (
         <div className="leaderboard-container">
             <div className="leaderboard-header">
-                <h2 className="leaderboard-title">Leaderboards</h2>
+                <div className="leaderboard-title-wrap">
+                    <span className="leaderboard-header-lottie" aria-hidden="true">
+                        {headerAnimation ? <Lottie animationData={headerAnimation} loop autoplay /> : <span>🏆</span>}
+                    </span>
+                    <h2 className="leaderboard-title">Leaderboards</h2>
+                </div>
                 
                 <div className="leaderboard-toggle-wrapper" data-active={view}>
                     <div className="leaderboard-toggle-pill"></div>
@@ -61,7 +122,15 @@ const Leaderboard = () => {
                 {activeData.map((user) => (
                     <div key={user.id} className={`leaderboard-row rank-${user.rank} ${user.isMe ? 'is-me' : ''}`}>
                         <div className="leaderboard-rank">
-                            {user.rank}
+                            {user.rank <= 3 ? (
+                                <span className="leaderboard-rank-lottie" aria-hidden="true">
+                                    {podiumAnimations[user.rank]
+                                        ? <Lottie animationData={podiumAnimations[user.rank]} loop autoplay />
+                                        : <span>{podiumFallback[user.rank]}</span>}
+                                </span>
+                            ) : (
+                                user.rank
+                            )}
                         </div>
                         <div className="leaderboard-avatar" style={{ background: user.avatarBg }}>
                             {user.avatarInit}

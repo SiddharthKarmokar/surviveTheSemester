@@ -1,124 +1,129 @@
-/* sidebar.css */
 .dashboard-sidebar {
-    width: 280px;
-    background-color: var(--md-sys-color-surface-container-low);
-    border-right: 1px solid var(--md-sys-color-outline-variant);
+    width: 100%;
+    background: #050505;
+    border: 1px solid #171717;
+    border-radius: 28px;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: calc(100vh - 250px);
     position: sticky;
-    top: 0;
-    overflow-y: auto;
+    top: 88px;
+    overflow: hidden;
 }
 
 .sidebar-logo {
     display: flex;
     align-items: center;
-    gap: var(--md-layout-gap);
-    padding: var(--md-layout-padding);
+    gap: 16px;
+    padding: 24px;
+    border-bottom: 1px solid #141414;
+}
+
+.sidebar-kicker {
+    margin: 0 0 4px;
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
 }
 
 .sidebar-logo h3 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 0.1px;
-    color: var(--md-sys-color-on-surface);
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.03em;
 }
 
 .logo-icon {
-    width: 32px;
-    height: 32px;
-    background-color: var(--md-sys-color-primary);
-    border-radius: var(--md-sys-shape-corner-small);
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #f0fd63;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon span {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    background: #000;
 }
 
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    padding: 0 12px var(--md-layout-padding);
-    gap: 4px; /* State layer density gap */
+    padding: 14px;
+    gap: 6px;
 }
 
 .sidebar-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    border: none;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid transparent;
     background: transparent;
     cursor: pointer;
-    font-size: 23px;
-    color: var(--md-sys-color-on-surface-variant);
-    font-family: 'Neue Montreal';
+    font-size: 15px;
+    color: #a8a8a8;
+    font-family: inherit;
     font-weight: 500;
-    border-radius: var(--md-sys-shape-corner-full); /* keep MD3 container shape logically */
-    transition: color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
-    position: relative;
+    border-radius: 18px;
     text-align: left;
     outline: none;
-    overflow: hidden;
 }
 
 .sidebar-item:hover {
-    color: #ffa500;
-}
-
-.sidebar-item:active {
-    background-color: transparent;
+    background: #090909;
+    color: #fff;
+    border-color: #161616;
 }
 
 .sidebar-item.active {
-    background-color: transparent;
-    color: #ffa500;
-    font-weight: 700;
-}
-
-.sidebar-item.active .sidebar-item-icon,
-.sidebar-item:hover .sidebar-item-icon {
-    color: #ffa500;
-    opacity: 1;
+    background: #0d0d0d;
+    color: #fff;
+    border-color: #202020;
 }
 
 .sidebar-item-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.8;
-    transition: color 0.3s ease, opacity 0.3s ease;
+    color: inherit;
+}
+
+.sidebar-item-label {
+    text-transform: capitalize;
 }
 
 .sidebar-item-arrow {
     margin-left: auto;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: all 0.3s ease;
-    font-weight: bold;
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    color: #6f6f6f;
 }
 
-.sidebar-item:hover .sidebar-item-arrow,
-.sidebar-item.active .sidebar-item-arrow {
-    opacity: 1;
-    transform: translateX(0);
+.notification-dot {
+    width: 8px;
+    height: 8px;
+    background: #f0fd63;
+    border-radius: 50%;
+    margin-left: auto;
 }
 
 .sidebar-separator {
     height: 1px;
-    background-color: var(--md-sys-color-outline-variant);
-    margin: 12px 16px;
-    opacity: 0.5;
-}
-
-@media (max-width: 1200px) {
-    .dashboard-sidebar {
-        width: 240px;
-    }
+    background: #141414;
+    margin: 12px 6px;
 }
 
 @media (max-width: 1024px) {
     .dashboard-sidebar {
-        width: 240px;
+        min-height: auto;
+        position: static;
     }
 }
 
