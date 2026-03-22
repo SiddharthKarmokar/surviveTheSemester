@@ -175,10 +175,12 @@ export const getNotifications = async (req, res) => {
            };
         }));
 
-        res.status(200).json({ notifications: populatedNotifications });
+        return res.status(200).json({ notifications: populatedNotifications });
     } catch (error) {
         console.error("getNotifications Error:", error);
-        res.status(500).json({ message: "An error occurred while fetching notifications" });
+        if (!res.headersSent) {
+            return res.status(500).json({ message: "An error occurred while fetching notifications" });
+        }
     }
 };
 

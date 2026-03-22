@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { io } from 'socket.io-client';
 import './chat.css';
 
 const SendIcon = () => (
@@ -8,61 +10,187 @@ const SendIcon = () => (
     </svg>
 );
 
-const dummyContacts = [
-    { id: 1, name: 'Alex Johnson', lastMsg: 'Are we doing the match tonight?', time: '10:45 AM', avatarBg: 'linear-gradient(135deg, #f12711, #f5af19)', init: 'AJ', online: true },
-    { id: 2, name: 'guest4991', lastMsg: 'GG man, that was close', time: 'Yesterday', avatarBg: 'linear-gradient(135deg, #11998e, #38ef7d)', init: 'G', online: false },
-    { id: 3, name: 'Sam Rivera', lastMsg: 'Send me the link when ready.', time: 'Monday', avatarBg: 'linear-gradient(135deg, #8E2DE2, #4A00E0)', init: 'SR', online: true },
-    { id: 4, name: 'Charlie Pal', lastMsg: 'I beat your high score 😎', time: 'Jan 12', avatarBg: '#555', init: 'CP', online: false },
-];
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
 
-const dummyMessages = {
-    1: [
-        { id: 101, text: 'Hey there!', sender: 'them', time: '10:30 AM' },
-        { id: 102, text: 'Hey Alex, what\'s up?', sender: 'me', time: '10:35 AM' },
-        { id: 103, text: 'Are we doing the match tonight?', sender: 'them', time: '10:45 AM' },
-    ],
-    2: [
-        { id: 201, text: 'Wow you are fast at 15 puzzle', sender: 'them', time: 'Yesterday, 4:00 PM' },
-        { id: 202, text: 'Thanks! Lots of practice haha', sender: 'me', time: 'Yesterday, 4:15 PM' },
-        { id: 203, text: 'GG man, that was close', sender: 'them', time: 'Yesterday, 4:20 PM' }
-    ],
-    3: [
-        { id: 301, text: 'Let\'s play group match with Bob', sender: 'them', time: 'Monday, 1:00 PM' },
-        { id: 302, text: 'Sure, I will invite', sender: 'me', time: 'Monday, 1:05 PM' },
-        { id: 303, text: 'Send me the link when ready.', sender: 'them', time: 'Monday, 1:15 PM' }
-    ],
-    4: [
-        { id: 401, text: 'Look at the leaderboard', sender: 'them', time: 'Jan 12, 9:00 AM' },
-        { id: 402, text: 'I beat your high score 😎', sender: 'them', time: 'Jan 12, 9:02 AM' }
-    ]
+const getAvatarBackground = (name) => {
+    const colors = [
+        'linear-gradient(135deg, #FF9A9E, #FECFEF)',
+        'linear-gradient(135deg, #a18cd1, #fbc2eb)',
+        'linear-gradient(135deg, #84fab0, #8fd3f4)',
+        'linear-gradient(135deg, #fccb90, #d57eeb)',
+        'linear-gradient(135deg, #e0c3fc, #8ec5fc)',
+    ];
+    if (!name) return colors[0];
+    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+};
+
+const getInitials = (name) => {
+    if (!name) return '?';
+    const parts = name.split(' ');
+    if (parts.length > 1) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return (name[0] || '?').toUpperCase();
+};
+
+const renderMessageContent = (text) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+        if (part.match(urlRegex)) {
+            return (
+                <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{ color: '#8ec5fc', textDecoration: 'underline' }}>
+                    {part}
+                </a>
+            );
+        }
+        return part;
+    });
 };
 
 const Chat = () => {
-    const [activeContactId, setActiveContactId] = useState(1);
+    const currentUser = useSelector((state) => state.user.currentUser);
+    const [contacts, setContacts] = useState([]);
+    const [activeContactId, setActiveContactId] = useState(null);
     const [inputMessage, setInputMessage] = useState('');
-    
-    // We would typically hold messages in state, simulating it here
-    const [messagesState, setMessagesState] = useState(dummyMessages);
+    const [messagesState, setMessagesState] = useState({}); // { friendId: [messages] }
+    const socketRef = useRef(null);
+    const messagesEndRef = useRef(null);
 
-    const activeContact = dummyContacts.find(c => c.id === activeContactId);
+    // Auto-scroll inside chat
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messagesState, activeContactId]);
+
+    useEffect(() => {
+        if (!currentUser) return;
+
+        // Fetch Friends
+        const fetchFriends = async () => {
+            try {
+                const res = await fetch(`${API_URL}/api/users/friends`, { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+                    const formatted = data.map(f => ({
+                        id: f.id,
+                        name: f.name,
+                        init: getInitials(f.name),
+                        avatarBg: getAvatarBackground(f.name),
+                        online: false,
+                        lastMsg: '',
+                        time: ''
+                    }));
+                    setContacts(formatted);
+                    if (formatted.length > 0) setActiveContactId(formatted[0].id);
+                }
+            } catch (err) {
+                console.error("Error fetching friends", err);
+            }
+        };
+
+        fetchFriends();
+
+        // Initialize Socket
+        socketRef.current = io(SOCKET_URL, {
+            query: { userId: currentUser.id }
+        });
+
+        const socket = socketRef.current;
+
+        socket.on("connect", () => {
+            socket.emit("get_online_friends", {}, (onlineFriendIds) => {
+                setContacts(prev => prev.map(c =>
+                    onlineFriendIds.includes(c.id) ? { ...c, online: true } : c
+                ));
+            });
+        });
+
+        socket.on("user_status", ({ userId, status }) => {
+            setContacts(prev => prev.map(c =>
+                c.id === userId ? { ...c, online: status === 'online' } : c
+            ));
+        });
+
+        socket.on("receive_message", (msg) => {
+            const partnerId = msg.senderId === currentUser.id ? msg.receiverId : msg.senderId;
+            setMessagesState(prev => ({
+                ...prev,
+                [partnerId]: [...(prev[partnerId] || []), msg]
+            }));
+
+            // update lastMsg preview
+            setContacts(prev => prev.map(c =>
+                c.id === partnerId ? {
+                    ...c,
+                    lastMsg: msg.content,
+                    time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                } : c
+            ));
+        });
+
+        socket.on("message_sent", (msg) => {
+            setMessagesState(prev => ({
+                ...prev,
+                [msg.receiverId]: [...(prev[msg.receiverId] || []), msg]
+            }));
+            setContacts(prev => prev.map(c =>
+                c.id === msg.receiverId ? {
+                    ...c,
+                    lastMsg: msg.content,
+                    time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                } : c
+            ));
+        });
+
+        return () => {
+            if (socket) socket.disconnect();
+        };
+    }, [currentUser]);
+
+    // Fetch history when active contact changes
+    useEffect(() => {
+        if (!activeContactId || !currentUser) return;
+
+        // if we already have some messages, we probably fetched them, but for real app better to refetch or paginate. 
+        // to avoid constant refetching:
+        if (messagesState[activeContactId]) return;
+
+        const fetchHistory = async () => {
+            try {
+                const res = await fetch(`${API_URL}/api/chat/history/${activeContactId}?userId=${currentUser.id}`, {
+                    credentials: 'include' // needed if backend relies on cookies for other middlewares
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setMessagesState(prev => ({
+                        ...prev,
+                        [activeContactId]: data
+                    }));
+                }
+            } catch (err) {
+                console.error("Error fetching chat history", err);
+            }
+        };
+
+        fetchHistory();
+    }, [activeContactId, currentUser]);
+
+    const activeContact = contacts.find(c => c.id === activeContactId);
     const activeMessages = messagesState[activeContactId] || [];
 
     const handleSendMessage = (e) => {
         e.preventDefault();
-        if (!inputMessage.trim()) return;
+        if (!inputMessage.trim() || !activeContactId || !socketRef.current) return;
 
-        const newMessage = {
-            id: Date.now(),
-            text: inputMessage,
-            sender: 'me',
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
+        socketRef.current.emit("send_message", {
+            receiverId: activeContactId,
+            content: inputMessage
+        });
 
-        setMessagesState(prev => ({
-            ...prev,
-            [activeContactId]: [...(prev[activeContactId] || []), newMessage]
-        }));
-        
         setInputMessage('');
     };
 
@@ -74,24 +202,30 @@ const Chat = () => {
                     <h3>Messages</h3>
                 </div>
                 <div className="chat-contacts-list">
-                    {dummyContacts.map(contact => (
-                        <div 
-                            key={contact.id} 
-                            className={`chat-contact-item ${activeContactId === contact.id ? 'active' : ''}`}
-                            onClick={() => setActiveContactId(contact.id)}
-                        >
-                            <div className="contact-avatar" style={{ background: contact.avatarBg }}>
-                                {contact.init}
-                            </div>
-                            <div className="contact-info">
-                                <div className="contact-header">
-                                    <h4 className="contact-name">{contact.name}</h4>
-                                    <span className="contact-time">{contact.time}</span>
-                                </div>
-                                <p className="contact-last-msg">{contact.lastMsg}</p>
-                            </div>
+                    {contacts.length === 0 ? (
+                        <div style={{ padding: '20px', textAlign: 'center', color: '#888' }}>
+                            You have no friends yet. Add some to start chatting!
                         </div>
-                    ))}
+                    ) : (
+                        contacts.map(contact => (
+                            <div
+                                key={contact.id}
+                                className={`chat-contact-item ${activeContactId === contact.id ? 'active' : ''}`}
+                                onClick={() => setActiveContactId(contact.id)}
+                            >
+                                <div className="contact-avatar" style={{ background: contact.avatarBg }}>
+                                    {contact.init}
+                                </div>
+                                <div className="contact-info">
+                                    <div className="contact-header">
+                                        <h4 className="contact-name">{contact.name}</h4>
+                                        <span className="contact-time">{contact.time}</span>
+                                    </div>
+                                    <p className="contact-last-msg">{contact.lastMsg || (contact.online ? 'Online' : 'Offline')}</p>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
 
@@ -109,19 +243,24 @@ const Chat = () => {
                     </div>
 
                     <div className="chat-messages-area">
-                        {activeMessages.map((msg) => (
-                            <div key={msg.id} className={`message-bubble-wrapper ${msg.sender === 'me' ? 'sent' : 'received'}`}>
-                                <div className="message-bubble">{msg.text}</div>
-                                <span className="message-time">{msg.time}</span>
-                            </div>
-                        ))}
+                        {activeMessages.map((msg) => {
+                            const isMe = msg.senderId === currentUser.id;
+                            const timeStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            return (
+                                <div key={msg.id} className={`message-bubble-wrapper ${isMe ? 'sent' : 'received'}`}>
+                                    <div className="message-bubble">{renderMessageContent(msg.content)}</div>
+                                    <span className="message-time">{timeStr}</span>
+                                </div>
+                            );
+                        })}
+                        <div ref={messagesEndRef} />
                     </div>
 
                     <form className="chat-input-area" onSubmit={handleSendMessage}>
-                        <input 
-                            type="text" 
-                            className="chat-input" 
-                            placeholder="Type a message..." 
+                        <input
+                            type="text"
+                            className="chat-input"
+                            placeholder="Type a message or send a game link..."
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
                         />
@@ -130,7 +269,11 @@ const Chat = () => {
                         </button>
                     </form>
                 </div>
-            ) : null}
+            ) : (
+                <div className="chat-main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <p style={{ color: '#888' }}>Select a friend to start chatting</p>
+                </div>
+            )}
         </div>
     );
 };

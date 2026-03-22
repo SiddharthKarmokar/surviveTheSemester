@@ -120,6 +120,7 @@ export const verifyUser = async (req, res, next) => {
 
 export const loginUser = async (req, res, next) => {
   try{
+    console.log("LOGIN REQUEST RECEIVED!", req.body);
     const { email, password } = req.body;
 
     if(!email || !password){

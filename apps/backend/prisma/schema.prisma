@@ -46,6 +46,9 @@ model users {
 
   images images[] @relation("UserImages")
   notifications Notification[]
+
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Notification {
@@ -57,4 +60,16 @@ model Notification {
   senderId  String?  @db.ObjectId
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Message {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId   String   @db.ObjectId
+  receiverId String   @db.ObjectId
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   users @relation("SentMessages", fields: [senderId], references: [id])
+  receiver users @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }
