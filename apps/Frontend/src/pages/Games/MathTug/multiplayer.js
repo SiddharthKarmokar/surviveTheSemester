@@ -54,6 +54,7 @@ export class MathTugMultiplayer {
     this.client = new Colyseus.Client(GAME_SERVER);
     this.room = null;
     this.handlers = {};
+    this.awaitingFirstQuestion = true;
   }
 
   on(event, handler) {
@@ -86,20 +87,41 @@ export class MathTugMultiplayer {
   }
 
   bindRoomEvents() {
+    this.awaitingFirstQuestion = true;
+
     this.room.onStateChange((state) => {
       this.trigger("state-change", state);
+
+      if (state?.phase === 'playing' && this.awaitingFirstQuestion) {
+        this.room.send('sync-question', {});
+      }
     });
 
     this.room.onMessage("room-state", ({ side }) => {
       this.trigger("connected", { side });
+
+      if (this.awaitingFirstQuestion) {
+        this.room.send('sync-question', {});
+      }
     });
 
     this.room.onMessage("pull-anim", ({ side, flagPos }) => {
       this.trigger("pull-anim", { side, flagPos });
     });
 
-    this.room.onMessage("game-over", ({ winner }) => {
-      this.trigger("game-over", { winner });
+    this.room.onMessage("question-update", (payload) => {
+      console.log(`[${new Date().toISOString()}] Client received question-update: done=${payload.done}, index=${payload.currentIndex}/${payload.totalQuestions}`);
+      this.awaitingFirstQuestion = false;
+      this.trigger("question-update", payload);
+    });
+
+    this.room.onMessage("answer-feedback", (payload) => {
+      this.trigger("answer-feedback", payload);
+    });
+
+    this.room.onMessage("game-over", (payload) => {
+      console.log(`[${new Date().toISOString()}] Client received game-over: ${payload.winnerName}`);
+      this.trigger("game-over", payload);
     });
 
     this.room.onMessage("opponent-left", () => {
@@ -111,21 +133,21 @@ export class MathTugMultiplayer {
     });
   }
 
-  async createRoom(playerName) {
-    const r = await this.connectRoom({ playerName }, "create");
+  async createRoom(playerName, userId) {
+    const r = await this.connectRoom({ playerName, userId }, "create");
     if (!r.ok) return { ok: false, message: r.error };
     return { ok: true, roomId: r.roomId };
   }
 
-  async joinRoom(roomId, playerName) {
-    const r = await this.connectRoom({ roomId, playerName }, "join");
+  async joinRoom(roomId, playerName, userId) {
+    const r = await this.connectRoom({ roomId, playerName, userId }, "join");
     if (!r.ok) return { ok: false, message: r.error || "Room not found or full." };
     return { ok: true, roomId: r.roomId };
   }
 
-  submitAnswer(side, val) {
+  submitAnswer(val) {
     if (this.room) {
-      this.room.send("submit-answer", { side, val });
+      this.room.send("submit-answer", { val });
     }
   }
 
@@ -134,6 +156,7 @@ export class MathTugMultiplayer {
       this.room.leave();
       this.room = null;
     }
+    this.awaitingFirstQuestion = true;
   }
 
   clearHandlers() {

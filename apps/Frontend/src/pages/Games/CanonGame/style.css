@@ -225,3 +225,16 @@
     width: 100%;
   }
 }
+.canon-brand-corner {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.canon-brand-logo {
+  display: block;
+  width: clamp(120px, 16vw, 168px);
+  height: auto;
+}

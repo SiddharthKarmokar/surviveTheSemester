@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser, clearUser } from './store/userSlice';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -15,7 +17,9 @@ import './App.css';
 import CampusFighter from './pages/Games/campusFighter/campusFighter';
 
 function App() {
+  const dispatch = useDispatch();
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
   useEffect(() => {
     const onLocationChange = () => {
@@ -25,6 +29,36 @@ function App() {
     window.addEventListener('popstate', onLocationChange);
     return () => window.removeEventListener('popstate', onLocationChange);
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const hydrateUser = async () => {
+      try {
+        const res = await fetch(`${API_URL}/auth/me`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          if (!cancelled) dispatch(clearUser());
+          return;
+        }
+
+        const data = await res.json();
+        if (!cancelled && data?.user) {
+          dispatch(setUser(data.user));
+        }
+      } catch {
+        if (!cancelled) dispatch(clearUser());
+      }
+    };
+
+    hydrateUser();
+    return () => {
+      cancelled = true;
+    };
+  }, [API_URL, dispatch]);
 
   if (currentPath === '/dashboard') {
     return <Dashboard />;
@@ -58,6 +92,7 @@ function App() {
       <Prizes />
       <Features />
       <GamesList />
+      <Footer />
     </div>
   );
 }

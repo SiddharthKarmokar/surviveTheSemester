@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/userSlice';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
+import logoBlack from '../assests/logos/logo_black.svg';
 import '../css/navbar.css';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const AVATAR_STORAGE_KEY = 'sts-avatar-preferences';
 
 const ProfileIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -29,6 +31,7 @@ const Navbar = () => {
     const [isSignupOpen, setIsSignupOpen] = useState(false);
     const [pathname, setPathname] = useState(window.location.pathname);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [avatarPrefs, setAvatarPrefs] = useState(null);
 
     React.useEffect(() => {
         const updatePath = () => setPathname(window.location.pathname);
@@ -40,6 +43,26 @@ const Navbar = () => {
         const closeMenu = () => setMenuOpen(false);
         window.addEventListener('click', closeMenu);
         return () => window.removeEventListener('click', closeMenu);
+    }, []);
+
+    React.useEffect(() => {
+        const syncAvatar = () => {
+            try {
+                const raw = localStorage.getItem(AVATAR_STORAGE_KEY);
+                setAvatarPrefs(raw ? JSON.parse(raw) : null);
+            } catch {
+                setAvatarPrefs(null);
+            }
+        };
+
+        syncAvatar();
+        window.addEventListener('storage', syncAvatar);
+        window.addEventListener('sts:avatar-updated', syncAvatar);
+
+        return () => {
+            window.removeEventListener('storage', syncAvatar);
+            window.removeEventListener('sts:avatar-updated', syncAvatar);
+        };
     }, []);
 
     const displayName = useMemo(
@@ -76,7 +99,7 @@ const Navbar = () => {
         <>
             <nav className="navbar">
                 <div id="title">
-                    <p>Games</p>
+                    <img src={logoBlack} alt="Survive The Semester" className="navbar-logo" />
                 </div>
 
                 <div id="buttons">
@@ -93,8 +116,18 @@ const Navbar = () => {
                                 aria-expanded={menuOpen}
                                 onClick={() => setMenuOpen((prev) => !prev)}
                             >
-                                <div className="dashboard-profile-avatar">
-                                    {displayName.charAt(0).toUpperCase()}
+                                <div
+                                    className="dashboard-profile-avatar"
+                                    style={{
+                                        background: avatarPrefs?.fill || '#f0fd63',
+                                        borderColor: avatarPrefs?.stroke || '#171717'
+                                    }}
+                                >
+                                    {avatarPrefs?.src ? (
+                                        <img src={avatarPrefs.src} alt={displayName} className="dashboard-profile-avatar-image" />
+                                    ) : (
+                                        displayName.charAt(0).toUpperCase()
+                                    )}
                                 </div>
                                 <div className="dashboard-profile-copy">
                                     <span className="dashboard-profile-name">{displayName}</span>

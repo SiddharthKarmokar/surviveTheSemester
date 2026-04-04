@@ -7,7 +7,7 @@ const Features = () => {
     return (
         <div id="features">
             <div id="feature-heading" ref={headingRef}>
-                PLAY & WIN
+                PLAY. FLEX. REPEAT.
             </div>
             <div id="feature-cards">
                 <div id="card-1"></div>

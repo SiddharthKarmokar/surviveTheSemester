@@ -1,5 +1,6 @@
 import { Room } from "@colyseus/core";
 import { BinarySudokuState, BinarySudokuPlayer } from "./BinarySudokuState.js";
+import { recordUnratedGameResult } from "../../services/ratingUpdateService.js";
 
 function validLine(arr, size) {
   if (arr.includes("")) return false;
@@ -121,6 +122,8 @@ export class BinarySudokuRoom extends Room {
     this.seatReservationTime = 5;
 
     this.setState(new BinarySudokuState());
+    this.playerSessions = new Map();
+    this.resultRecorded = false;
 
     this.state.size = parseInt(options.size) || 6;
     this.state.difficulty = options.difficulty || "medium";
@@ -181,6 +184,34 @@ export class BinarySudokuRoom extends Room {
       this.raceTimer.clear();
       this.raceTimer = null;
     }
+
+    if (!this.resultRecorded && this.state.winner) {
+      this.resultRecorded = true;
+      const winnerSessionId = this.state.winner;
+      const loserSessionId = [...this.state.players.keys()].find((id) => id !== winnerSessionId);
+      const winnerUserId = this.playerSessions.get(winnerSessionId)?.userId;
+      const loserUserId = this.playerSessions.get(loserSessionId)?.userId;
+      const winnerPlayer = this.state.players.get(winnerSessionId);
+      const loserPlayer = loserSessionId ? this.state.players.get(loserSessionId) : null;
+
+      if (winnerUserId && loserUserId) {
+        void recordUnratedGameResult({
+          gameType: "binarySudoku",
+          winnerId: winnerUserId,
+          loserId: loserUserId,
+          winnerScore: Number(winnerPlayer?.time || this.state.timer || 0),
+          loserScore: Number(loserPlayer?.time || this.state.timer || 0),
+          gameMetadata: {
+            size: this.state.size,
+            difficulty: this.state.difficulty,
+            timer: this.state.timer,
+          },
+        }).catch((error) => {
+          console.error("[BinarySudoku] Failed to record game completion:", error);
+        });
+      }
+    }
+
     this.broadcast("game-over");
   }
 
@@ -188,6 +219,10 @@ export class BinarySudokuRoom extends Room {
     const player = new BinarySudokuPlayer();
     player.name = String(options.playerName || "Player").slice(0, 16);
     this.state.players.set(client.sessionId, player);
+    this.playerSessions.set(client.sessionId, {
+      userId: options.userId || null,
+      name: player.name,
+    });
 
     if (this.state.players.size === 2 && this.state.phase === "waiting") {
       this.startRace();
@@ -197,6 +232,7 @@ export class BinarySudokuRoom extends Room {
   onLeave(client, consented) {
     const p = this.state.players.get(client.sessionId);
     this.state.players.delete(client.sessionId);
+    this.playerSessions.delete(client.sessionId);
 
     if (this.state.phase === "playing") {
       this.broadcast("opponent-left", { name: p?.name });

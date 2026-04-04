@@ -11,6 +11,20 @@
   position: relative;
 }
 
+.p15-brand-corner {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.p15-brand-logo {
+  display: block;
+  width: clamp(120px, 16vw, 168px);
+  height: auto;
+}
+
 .p15-page::before {
   content: "";
   position: absolute;
@@ -28,8 +42,8 @@
 
 .p15-back {
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: 72px;
+  left: 18px;
   background: #0d0d0d;
   color: #fff;
   border: 1px solid #242424;
@@ -424,6 +438,14 @@
 }
 
 @media (max-width: 700px) {
+  .p15-brand-logo {
+    width: 126px;
+  }
+
+  .p15-back {
+    top: 68px;
+  }
+
   .p15-card {
     padding: 28px 20px;
   }

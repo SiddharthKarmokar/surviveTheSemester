@@ -87,14 +87,14 @@ export class MultiplayerClient {
     });
   }
 
-  async createRoom(targetScore, theme) {
-    const r = await this.connectRoom({ targetScore, theme }, "create");
+  async createRoom(targetScore, theme, userId) {
+    const r = await this.connectRoom({ targetScore, theme, userId }, "create");
     if (!r.ok) return { ok: false, message: r.error };
     return { ok: true, roomId: r.roomId, side: "left", state: {} };
   }
 
-  async joinRoom(roomId) {
-    const r = await this.connectRoom({ roomId }, "join");
+  async joinRoom(roomId, userId) {
+    const r = await this.connectRoom({ roomId, userId }, "join");
     if (!r.ok) return { ok: false, message: r.error || "Room not found or full." };
     return { ok: true, roomId: r.roomId, side: "right", state: {} };
   }

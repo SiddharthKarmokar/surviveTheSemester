@@ -5,13 +5,15 @@ import './gamecardgrid.css';
 import tosiosImage from '../../assests/gamesCards/tosios.png';
 import puzzleImage from '../../assests/gamesCards/15puzzle.png';
 import canonImage from '../../assests/gamesCards/canon.png';
+import mathTugImage from '../../assests/gamesCards/mathTug.png';
+import binarySudokuImage from '../../assests/gamesCards/binarySudoku.png'
 
 const games = [
     { id: 1, title: 'Two Player Arena (TOSIOS)', imageSrc: tosiosImage, gameId: 'twoPlayer' },
     { id: 2, title: '15 Puzzle', imageSrc: puzzleImage, gameId: 'puzzle' },
     { id: 3, title: 'Canon Game', imageSrc: canonImage, gameId: 'canonGame' },
-    { id: 4, title: 'Math Tug-of-War', imageSrc: tosiosImage, gameId: 'mathTug' },
-    { id: 5, title: 'Binary Sudoku', imageSrc: canonImage, gameId: 'binarySudoku' },
+    { id: 4, title: 'Math Tug-of-War', imageSrc: mathTugImage, gameId: 'mathTug' },
+    { id: 5, title: 'Binary Sudoku', imageSrc: binarySudokuImage, gameId: 'binarySudoku' },
 ];
 
 const GameCardGrid = ({ onPlayGame }) => {

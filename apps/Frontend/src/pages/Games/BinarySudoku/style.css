@@ -6,6 +6,20 @@
     position: relative;
 }
 
+.bs-brand-corner {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 12;
+    pointer-events: none;
+}
+
+.bs-brand-logo {
+    display: block;
+    width: clamp(120px, 16vw, 168px);
+    height: auto;
+}
+
 .bski-ui::before {
     content: "";
     position: absolute;

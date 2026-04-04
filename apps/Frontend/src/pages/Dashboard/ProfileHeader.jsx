@@ -2,7 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import './profileheader.css';
 import EditProfileModal from './EditProfileModal';
-import bannerPlaceholder from '../../assests/gamesCards/15puzzle.png';
+import explorerBadge from '../../assests/title_badges/explorer.svg';
+
+const AVATAR_STORAGE_KEY = 'sts-avatar-preferences';
+const avatarModules = import.meta.glob('../../assests/avatars/*.svg', { eager: true, import: 'default' });
+const avatarOptions = Object.entries(avatarModules)
+    .sort((a, b) => {
+        const aNum = Number(a[0].match(/(\d+)\.svg$/)?.[1] || 0);
+        const bNum = Number(b[0].match(/(\d+)\.svg$/)?.[1] || 0);
+        return aNum - bNum;
+    })
+    .map(([, src]) => src);
 
 const UserPlusIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -23,26 +33,76 @@ const EditIcon = () => (
 const ProfileHeader = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const user = useSelector((state) => state.user.currentUser);
+    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
     const [profile, setProfile] = useState({
         name: user?.name || 'Guest',
         handle: user?.email ? `@${user.email.split('@')[0]}` : '@guest',
         friends: 0,
-        avatarGradient: 'linear-gradient(135deg, #ff7e5f, #feb47b)'
+        avatar: {
+            src: avatarOptions[0] || '',
+            fill: '#121212',
+            stroke: '#f0fd63'
+        }
     });
 
     useEffect(() => {
+        let storedAvatar = null;
+
+        try {
+            const raw = localStorage.getItem(AVATAR_STORAGE_KEY);
+            storedAvatar = raw ? JSON.parse(raw) : null;
+        } catch {
+            storedAvatar = null;
+        }
+
         if (user) {
             setProfile((prev) => ({
                 ...prev,
                 name: user.name,
-                handle: `@${user.email.split('@')[0]}`
+                handle: `@${user.email.split('@')[0]}`,
+                friends: Array.isArray(user.friendlist) ? new Set(user.friendlist).size : 0,
+                avatar: storedAvatar || prev.avatar
+            }));
+        } else if (storedAvatar) {
+            setProfile((prev) => ({
+                ...prev,
+                avatar: storedAvatar
             }));
         }
     }, [user]);
 
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchSummary = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/rating/summary`, {
+                    credentials: 'include'
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!cancelled) {
+                    setProfile((prev) => ({
+                        ...prev,
+                        friends: Number(data?.friendsCount || 0)
+                    }));
+                }
+            } catch {
+                // keep existing profile values on fetch failure
+            }
+        };
+
+        fetchSummary();
+        return () => {
+            cancelled = true;
+        };
+    }, [API_URL]);
+
     const handleSaveProfile = (newData) => {
-        setProfile(newData);
+        setProfile((prev) => ({ ...prev, avatar: newData }));
+        localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(newData));
+        window.dispatchEvent(new Event('sts:avatar-updated'));
     };
 
     const handleMoreFriends = () => {
@@ -52,13 +112,29 @@ const ProfileHeader = () => {
     return (
         <div className="profile-header-container">
             <div className="profile-cover">
-                <img src={bannerPlaceholder} alt="Profile banner" className="profile-cover-image" />
-                <span className="profile-cover-badge">Amateur</span>
+                <img src={explorerBadge} alt="Explorer title badge" className="profile-cover-image" />
+                <span className="profile-cover-badge">Explorer</span>
             </div>
 
             <div className="profile-info-section">
                 <div className="profile-avatar-wrapper">
-                    <div className="profile-avatar" style={{ background: profile.avatarGradient }}></div>
+                    <div
+                        className="profile-avatar"
+                        style={{
+                            background: profile.avatar.fill,
+                            borderColor: profile.avatar.stroke
+                        }}
+                    >
+                        {profile.avatar.src && <img src={profile.avatar.src} alt={profile.name} className="profile-avatar-image" />}
+                    </div>
+                    <button
+                        type="button"
+                        className="profile-avatar-edit"
+                        onClick={() => setIsEditModalOpen(true)}
+                        title="Edit avatar"
+                    >
+                        <EditIcon />
+                    </button>
                 </div>
 
                 <div className="profile-details">
@@ -71,16 +147,14 @@ const ProfileHeader = () => {
                     <button type="button" className="profile-action-btn" onClick={handleMoreFriends}>
                         <UserPlusIcon /> Add More Friends
                     </button>
-                    <button type="button" className="profile-share-btn" onClick={() => setIsEditModalOpen(true)} title="Edit Profile">
-                        <EditIcon />
-                    </button>
                 </div>
             </div>
 
             <EditProfileModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
-                profileData={profile}
+                profileData={profile.avatar}
+                profileName={profile.name}
                 onSave={handleSaveProfile}
             />
         </div>

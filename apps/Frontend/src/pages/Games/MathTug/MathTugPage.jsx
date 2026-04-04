@@ -1,28 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { MathTugMultiplayer } from './multiplayer';
 import './style.css';
+import logoBlack from '../../../assests/logos/logo_black.svg';
 
 const BACKEND_URL = import.meta.env.VITE_GAME_SERVER_URL || 'http://localhost:3000';
 
 export default function MathTugPage() {
+  const user = useSelector((state) => state.user.currentUser);
   const [screen, setScreen] = useState('menu');
   const [playerName, setPlayerName] = useState(() => localStorage.getItem('playerName') || 'Player');
-  const [scores, setScores] = useState({ left: 0, right: 0 });
-  const [timer, setTimer] = useState(10);
-  const [flagPos, setFlagPos] = useState(0);
-  const [questions, setQuestions] = useState({ q1: '', q2: '' });
+  const [scores, setScores] = useState({ you: 0, opponent: 0 });
+  const [timer, setTimer] = useState(60);
   const [localSide, setLocalSide] = useState('');
+  const [questionText, setQuestionText] = useState('Waiting for first question...');
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [totalQuestions, setTotalQuestions] = useState(10);
+  const [answerInput, setAnswerInput] = useState('');
+  const [feedbackMsg, setFeedbackMsg] = useState('');
   const [winnerMessage, setWinnerMessage] = useState('');
+  const [standings, setStandings] = useState([]);
   const [inviteLink, setInviteLink] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [ans1, setAns1] = useState('');
-  const [ans2, setAns2] = useState('');
   const [browsingRooms, setBrowsingRooms] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
 
   const mpRef = useRef(null);
-  const p1CharRef = useRef(null);
-  const p2CharRef = useRef(null);
   const listenersBoundRef = useRef(false);
   const autoJoinHandledRef = useRef(false);
 
@@ -52,26 +55,46 @@ export default function MathTugPage() {
     }
   }, []);
 
+  const buildStandingsFromState = (players, localSessionId) => {
+    if (!players || typeof players.forEach !== 'function') return [];
+
+    const rows = [];
+    players.forEach((player, sessionId) => {
+      rows.push({
+        sessionId,
+        name: player?.name || (sessionId === localSessionId ? 'You' : 'Opponent'),
+        solved: Number(player?.score || 0),
+        totalTimeMs: Number(player?.totalTimeMs || 0)
+      });
+    });
+
+    return rows.sort((a, b) => {
+      if (b.solved !== a.solved) return b.solved - a.solved;
+      return a.totalTimeMs - b.totalTimeMs;
+    });
+  };
+
   const handleJoinByLink = async (roomId) => {
     setScreen('waiting');
     setErrorMsg('');
     setInviteLink('');
     if (!mpRef.current) mpRef.current = new MathTugMultiplayer();
-    const res = await mpRef.current.joinRoom(roomId, playerName);
+    setupRoomListeners();
+    const res = await mpRef.current.joinRoom(roomId, playerName, user?.id);
     if (!res.ok) {
       setErrorMsg(res.message);
       setScreen('menu');
       return;
     }
-    setupRoomListeners();
   };
 
   const createRoom = async () => {
     setScreen('waiting');
     setErrorMsg('');
     if (!mpRef.current) mpRef.current = new MathTugMultiplayer();
+    setupRoomListeners();
 
-    const res = await mpRef.current.createRoom(playerName);
+    const res = await mpRef.current.createRoom(playerName, user?.id);
     if (!res.ok) {
       setErrorMsg(res.message);
       setScreen('menu');
@@ -81,7 +104,6 @@ export default function MathTugPage() {
     const link = `${window.location.origin}/mathtug?roomId=${res.roomId}`;
     setInviteLink(link);
     window.history.pushState({}, '', `/mathtug?roomId=${res.roomId}`);
-    setupRoomListeners();
   };
 
   const browseRooms = async () => {
@@ -105,15 +127,15 @@ export default function MathTugPage() {
     setErrorMsg('');
     setInviteLink('');
     if (!mpRef.current) mpRef.current = new MathTugMultiplayer();
+    setupRoomListeners();
 
-    const res = await mpRef.current.joinRoom(roomId, playerName);
+    const res = await mpRef.current.joinRoom(roomId, playerName, user?.id);
     if (!res.ok) {
       setErrorMsg(res.message);
       setScreen('browser');
       return;
     }
     window.history.pushState({}, '', `/mathtug?roomId=${res.roomId}`);
-    setupRoomListeners();
   };
 
   const setupRoomListeners = () => {
@@ -128,28 +150,58 @@ export default function MathTugPage() {
     mpRef.current.on('state-change', (state) => {
       const players = state?.players;
       const localSessionId = mpRef.current?.sessionId;
-      setScores({
-        left: getScore(players, 'left', localSessionId),
-        right: getScore(players, 'right', localSessionId)
-      });
-      setFlagPos(state.flagPos);
-      setTimer(state.timer);
-      setQuestions({ q1: state.q1Str, q2: state.q2Str });
+      setScores(getScore(players, localSessionId));
+      setTimer(Number(state?.timer || 0));
+      setTotalQuestions(Number(state?.totalQuestions || 10));
 
       if (state.phase === 'playing') {
         setScreen('playing');
       }
+
+      if (state.phase === 'ended') {
+        const derivedStandings = buildStandingsFromState(players, localSessionId);
+        const fallbackWinner = derivedStandings[0] || null;
+
+        setScreen('ended');
+        setStandings(derivedStandings);
+
+        if (!fallbackWinner) {
+          setWinnerMessage('Match ended without a winner.');
+        } else if ((state?.winnerSessionId || fallbackWinner.sessionId) === localSessionId) {
+          setWinnerMessage('You win! Highest solved count and best time.');
+        } else {
+          setWinnerMessage(`${state?.winner || fallbackWinner.name || 'Opponent'} wins this round.`);
+        }
+      }
     });
 
-    mpRef.current.on('pull-anim', ({ side }) => {
-      animatePull(side);
+    mpRef.current.on('question-update', (payload) => {
+      setTotalQuestions(Number(payload?.totalQuestions || 10));
+      setQuestionIndex(Number(payload?.currentIndex || 0));
+      setQuestionText(payload?.done ? 'All questions solved. Waiting for result...' : (payload?.questionText || 'Question unavailable'));
+      setFeedbackMsg('');
     });
 
-    mpRef.current.on('game-over', ({ winner }) => {
+    mpRef.current.on('answer-feedback', (payload) => {
+      if (payload?.correct) {
+        setAnswerInput('');
+      }
+      setFeedbackMsg(payload?.message || '');
+    });
+
+    mpRef.current.on('game-over', ({ winnerSessionId, winnerName, standings: resultStandings = [] }) => {
+      const localSessionId = mpRef.current?.sessionId;
       setScreen('ended');
-      if (winner === localSide) setWinnerMessage('You Win!');
-      else if (winner === 'left' || winner === 'right') setWinnerMessage('You Lost!');
-      else setWinnerMessage('Match Terminated!');
+
+      if (!winnerSessionId) {
+        setWinnerMessage('Match ended without a winner.');
+      } else if (winnerSessionId === localSessionId) {
+        setWinnerMessage('You win! Highest solved count and best time.');
+      } else {
+        setWinnerMessage(`${winnerName || 'Opponent'} wins this round.`);
+      }
+
+      setStandings(Array.isArray(resultStandings) ? resultStandings : []);
     });
 
     mpRef.current.on('opponent-left', () => {
@@ -158,8 +210,8 @@ export default function MathTugPage() {
     });
   };
 
-  const getScore = (players, checkSide, localSessionId) => {
-    if (!players || typeof players.forEach !== 'function') return 0;
+  const getScore = (players, localSessionId) => {
+    if (!players || typeof players.forEach !== 'function') return { you: 0, opponent: 0 };
     let localScore = 0;
     let opponentScore = 0;
 
@@ -168,36 +220,15 @@ export default function MathTugPage() {
       else opponentScore = Number(player?.score || 0);
     });
 
-    if (!localSide) {
-      const ordered = [];
-      players.forEach((player) => ordered.push(Number(player?.score || 0)));
-      return checkSide === 'left' ? (ordered[0] || 0) : (ordered[1] || 0);
-    }
-
-    if (localSide === 'left') return checkSide === 'left' ? localScore : opponentScore;
-    return checkSide === 'right' ? localScore : opponentScore;
+    return { you: localScore, opponent: opponentScore };
   };
 
-  const animatePull = (side) => {
-    const char = side === 'left' ? p1CharRef.current : p2CharRef.current;
-    if (char) {
-      char.style.transform = 'translateX(20px)';
-      setTimeout(() => {
-        if (char) char.style.transform = 'translateX(0px)';
-      }, 200);
-    }
-  };
-
-  const handleSubmit = (e, side) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (side !== localSide) return;
-
-    const val = side === 'left' ? parseInt(ans1) : parseInt(ans2);
+    const val = parseInt(answerInput, 10);
     if (!isNaN(val)) {
-      mpRef.current.submitAnswer(localSide, val);
+      mpRef.current.submitAnswer(val);
     }
-    if (side === 'left') setAns1('');
-    else setAns2('');
   };
 
   const quitGame = () => {
@@ -207,11 +238,15 @@ export default function MathTugPage() {
     }
     listenersBoundRef.current = false;
     setLocalSide('');
-    setScores({ left: 0, right: 0 });
-    setFlagPos(0);
-    setTimer(10);
-    setQuestions({ q1: '', q2: '' });
+    setScores({ you: 0, opponent: 0 });
+    setTimer(60);
+    setQuestionText('Waiting for first question...');
+    setQuestionIndex(0);
+    setTotalQuestions(10);
+    setAnswerInput('');
+    setFeedbackMsg('');
     setWinnerMessage('');
+    setStandings([]);
     setInviteLink('');
     window.history.pushState({}, '', '/mathtug');
     setScreen('menu');
@@ -228,6 +263,9 @@ export default function MathTugPage() {
 
   return (
     <div className="mathtug-ui">
+      <div className="mathtug-brand-corner">
+        <img src={logoBlack} alt="Survive The Semester" className="mathtug-brand-logo" />
+      </div>
       {screen === 'menu' && (
         <div className="main-menu flex-center-col full-screen">
           <div className="mathtug-card mathtug-hero-card">
@@ -304,64 +342,44 @@ export default function MathTugPage() {
       )}
 
       {(screen === 'playing' || screen === 'ended') && (
-        <div className="game-container full-screen">
-          <header className="game-header">
-            <div className="player-panel">
-              <p className="mathtug-panel-tag">Left side</p>
-              <h3>Player 1 {localSide === 'left' && '(You)'}</h3>
-              <div className="score">Score: {scores.left}</div>
-            </div>
+        <div className="full-screen mathtug-play-shell">
+          <div className="mathtug-play-card">
+            <header className="mathtug-match-header">
+              <div className="mathtug-score-pill">
+                <span className="mathtug-pill-label">You</span>
+                <strong>{scores.you}</strong>
+              </div>
 
-            <div className="timer-box">
-              <span className="mathtug-timer-label">Round timer</span>
-              <div id="timer">{timer}</div>
-            </div>
+              <div className="mathtug-center-status">
+                <p className="mathtug-progress-label">Question {questionIndex} / {totalQuestions}</p>
+                <p className="mathtug-clock">{timer}s left</p>
+              </div>
 
-            <div className="player-panel">
-              <p className="mathtug-panel-tag">Right side</p>
-              <h3>Player 2 {localSide === 'right' && '(You)'}</h3>
-              <div className="score">Score: {scores.right}</div>
-            </div>
-          </header>
+              <div className="mathtug-score-pill">
+                <span className="mathtug-pill-label">Opponent</span>
+                <strong>{scores.opponent}</strong>
+              </div>
+            </header>
 
-          <div className="game-area">
-            <div className="mathtug-equation-strip" aria-hidden="true">2 + 2   7 x 3   12 - 5   9 / 3</div>
-            <div className="ground"></div>
-            <div className="rope"></div>
-            <div id="flag" className="flag" style={{ left: `${240 + flagPos}px` }}></div>
-            <div id="p1char" className="character p1-char" ref={p1CharRef}>+</div>
-            <div id="p2char" className="character p2-char" ref={p2CharRef}>=</div>
-          </div>
+            <section className="mathtug-question-zone">
+              <p className="mathtug-question-heading">Solve this</p>
+              <h2 className="mathtug-main-question">{questionText}</h2>
+              {feedbackMsg && <p className="mathtug-feedback">{feedbackMsg}</p>}
+            </section>
 
-          <div className="controls">
-            <div className={`control-panel ${localSide !== 'left' ? 'disabled-panel' : ''}`}>
-              <p className="mathtug-question-tag">Left answer</p>
-              <div className="question-box">{questions.q1 || '?'}</div>
-              <form onSubmit={(e) => handleSubmit(e, 'left')}>
-                <input
-                  type="number"
-                  placeholder="Answer"
-                  value={ans1}
-                  disabled={localSide !== 'left' || screen === 'ended'}
-                  onChange={(e) => setAns1(e.target.value)}
-                />
-                <button type="submit" disabled={localSide !== 'left' || screen === 'ended'}>Submit</button>
-              </form>
-            </div>
+            <form className="mathtug-answer-form" onSubmit={handleSubmit}>
+              <input
+                type="number"
+                placeholder="Type your answer"
+                value={answerInput}
+                disabled={screen === 'ended' || questionIndex === 0 || questionIndex > totalQuestions}
+                onChange={(e) => setAnswerInput(e.target.value)}
+              />
+              <button type="submit" disabled={screen === 'ended' || questionIndex === 0 || questionIndex > totalQuestions}>Submit</button>
+            </form>
 
-            <div className={`control-panel ${localSide !== 'right' ? 'disabled-panel' : ''}`}>
-              <p className="mathtug-question-tag">Right answer</p>
-              <div className="question-box">{questions.q2 || '?'}</div>
-              <form onSubmit={(e) => handleSubmit(e, 'right')}>
-                <input
-                  type="number"
-                  placeholder="Answer"
-                  value={ans2}
-                  disabled={localSide !== 'right' || screen === 'ended'}
-                  onChange={(e) => setAns2(e.target.value)}
-                />
-                <button type="submit" disabled={localSide !== 'right' || screen === 'ended'}>Submit</button>
-              </form>
+            <div className="mathtug-side-note">
+              Both players receive the same 10 questions in order. Winner is decided by solved count, then total solve time.
             </div>
           </div>
 
@@ -369,6 +387,16 @@ export default function MathTugPage() {
             <div id="overlay" className="overlay active">
               <div className="mathtug-card mathtug-end-card">
                 <div id="message" className="message">{winnerMessage}</div>
+                {standings.length > 0 && (
+                  <div className="mathtug-standings">
+                    {standings.map((entry, idx) => (
+                      <div className="mathtug-standing-row" key={`${entry.sessionId}-${idx}`}>
+                        <span>{idx + 1}. {entry.name}</span>
+                        <span>{entry.solved}/10 · {(Number(entry.totalTimeMs || 0) / 1000).toFixed(2)}s</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <button onClick={quitGame} className="menu-btn mathtug-top-gap">Back to Menu</button>
               </div>
             </div>

@@ -1,0 +1,123 @@
+.landing-footer {
+  padding: 32px 14px 18px;
+  background: #ffffff;
+  color: #111111;
+  /* font-family: "Sora", "Segoe UI", sans-serif; */
+  font-family: "font4", "Segoe UI", Arial, sans-serif;
+}
+
+.landing-footer__content {
+  display: flex;
+  gap: 50px;
+  /* grid-template-columns: minmax(0, 1fr) minmax(20px, 500px); */
+  /* gap: 56px 72px; */
+  align-items: start;
+}
+
+.landing-footer__section {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.landing-footer__section-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.landing-footer__chips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.landing-footer__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #efefef;
+  color: #111111;
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+
+.landing-footer__address p {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.landing-footer__brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 20px;
+  margin-top: 64px;
+}
+
+.landing-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.landing-footer__brand-logo {
+  width: 134px;
+  height: 134px;
+  object-fit: contain;
+  display: block;
+  
+}
+
+.landing-footer__brand-name {
+  display: inline-flex;
+  align-items: center;
+  min-height: 104px;
+  font-size: clamp(6rem, 9vw, 8rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.landing-footer__site-mark {
+  margin: 0;
+  font-size: 1.08rem;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 760px) {
+  .landing-footer {
+    padding: 28px 14px 20px;
+  }
+
+  .landing-footer__content {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .landing-footer__brand-row {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 48px;
+  }
+
+  .landing-footer__brand {
+    align-items: center;
+  }
+
+  .landing-footer__brand-logo {
+    width: 88px;
+    height: 88px;
+  }
+
+  .landing-footer__brand-name {
+    min-height: 88px;
+    font-size: clamp(2.1rem, 8vw, 3rem);
+  }
+}

@@ -174,12 +174,13 @@ const Prizes = () => {
                     <img src="/assests/wonderland.webp" className="card-bg" alt="Wonderland" />
                     <div className="canvas-container" ref={leftCanvasRef}></div>
                 </div>
+                
 
                 <div id="prizes-text">  
-                    <p className="prize-line">Explore the</p>
-                    <p className="prize-line">world of </p>
+                    <p className="prize-line">Explore games</p>
+                    <p className="prize-line">worth taking </p>
                     <div className="kingdoms-text">
-                        <span className="prize-line">prize kingdoms</span>
+                        <span className="prize-line">a break for.</span>
                         <div className="small-dice-container" ref={smallDiceCanvasRef}></div>
                     </div>
                 </div>

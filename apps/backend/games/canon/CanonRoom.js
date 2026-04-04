@@ -1,5 +1,6 @@
 import { Room } from "@colyseus/core";
 import { CanonState, CanonPlayer } from "./CanonState.js";
+import { recordUnratedGameResult } from "../../services/ratingUpdateService.js";
 
 const DEFAULT_TARGET_SCORE = 3;
 const ALLOWED_TARGETS = new Set([3, 5, 10, 15, 20]);
@@ -22,6 +23,8 @@ export class CanonRoom extends Room {
   onCreate(options) {
     this.maxClients = 2;
     this.setState(new CanonState());
+    this.playerSessions = new Map();
+    this.resultRecorded = false;
 
     this.state.targetScore = options.targetScore ? normalizeTargetScore(options.targetScore) : 3;
     this.state.theme = options.theme ? normalizeTheme(options.theme) : "space";
@@ -80,6 +83,30 @@ export class CanonRoom extends Room {
           scores: { left: this.state.scores.left, right: this.state.scores.right },
           targetScore: this.state.targetScore
         });
+
+        if (!this.resultRecorded && this.clients.length >= 2) {
+          this.resultRecorded = true;
+          const winnerSessionId = winner === "left" ? this.clients[0]?.sessionId : this.clients[1]?.sessionId;
+          const loserSessionId = winner === "left" ? this.clients[1]?.sessionId : this.clients[0]?.sessionId;
+          const winnerUserId = this.playerSessions.get(winnerSessionId)?.userId;
+          const loserUserId = this.playerSessions.get(loserSessionId)?.userId;
+
+          if (winnerUserId && loserUserId) {
+            void recordUnratedGameResult({
+              gameType: "canon",
+              winnerId: winnerUserId,
+              loserId: loserUserId,
+              winnerScore: Number(this.state.scores[winner] || 0),
+              loserScore: Number(this.state.scores[winner === "left" ? "right" : "left"] || 0),
+              gameMetadata: {
+                targetScore: this.state.targetScore,
+                theme: this.state.theme,
+              },
+            }).catch((error) => {
+              console.error("[Canon] Failed to record game completion:", error);
+            });
+          }
+        }
       } else {
         this.state.wind = randomWind();
         this.broadcast("round-reset", { 
@@ -106,6 +133,10 @@ export class CanonRoom extends Room {
     const player = new CanonPlayer();
     player.name = String(options.playerName || "Player").slice(0, 16);
     this.state.players.set(client.sessionId, player);
+    this.playerSessions.set(client.sessionId, {
+      userId: options.userId || null,
+      name: player.name,
+    });
 
     // Initial sync of room state implicitly happens by State changes.
     // Let's send a custom welcome to assign 'side'
@@ -131,6 +162,7 @@ export class CanonRoom extends Room {
 
   onLeave(client, consented) {
     this.state.players.delete(client.sessionId);
+    this.playerSessions.delete(client.sessionId);
     this.broadcast("opponent-left");
   }
 

@@ -9,6 +9,23 @@ import { HUD } from './components/HUD/HUD';
 import { HUDProps } from './components/HUD';
 import { JoySticks, JoystickDirections } from './components/JoySticks';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+
+async function fetchAuthenticatedUserId() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/auth/me`, {
+            credentials: 'include'
+        });
+
+        if (!response.ok) return '';
+
+        const data = await response.json();
+        return data?.user?.id || '';
+    } catch {
+        return '';
+    }
+}
+
 const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
 export function GameScreen() {
@@ -60,6 +77,7 @@ export function GameScreen() {
         if (!roomId) return;
 
         const isNewRoom = roomId === 'new';
+        const userId = await fetchAuthenticatedUserId();
 
         gameRef.current = new Game(
             window.innerWidth,
@@ -78,10 +96,12 @@ export function GameScreen() {
                 roomMap: params.get("roomMap") || "small",
                 roomMaxPlayers: Number(params.get("roomMaxPlayers") || 2),
                 mode: params.get("mode") || "deathmatch",
+                userId,
             };
         } else {
             options = {
                 playerName: localStorage.getItem("playerName") || "Player",
+                userId,
             };
         }
 

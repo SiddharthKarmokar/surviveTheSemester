@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { BinarySudokuMultiplayer } from './multiplayer';
 import './style.css';
+import logoBlack from '../../../assests/logos/logo_black.svg';
 
 const BACKEND_URL = import.meta.env.VITE_GAME_SERVER_URL || 'http://localhost:3000';
 
@@ -53,6 +55,7 @@ function solvedAgainstSolution(boardData, solutionData, size) {
 }
 
 export default function BinarySudokuPage() {
+  const user = useSelector((state) => state.user.currentUser);
   const [screen, setScreen] = useState('menu'); 
   const [playerName, setPlayerName] = useState(() => localStorage.getItem('playerName') || 'Player');
   
@@ -122,7 +125,7 @@ export default function BinarySudokuPage() {
     setInviteLink('');
     try {
       if (!mpRef.current) mpRef.current = new BinarySudokuMultiplayer();
-      const res = await mpRef.current.joinRoom(roomId, playerName);
+      const res = await mpRef.current.joinRoom(roomId, playerName, user?.id);
       if (!res.ok) {
         setErrorMsg(res.message);
         setScreen('menu');
@@ -142,7 +145,7 @@ export default function BinarySudokuPage() {
     setIsCreatingRoom(true);
     if (!mpRef.current) mpRef.current = new BinarySudokuMultiplayer();
     try {
-      const res = await mpRef.current.createRoom(playerName, size, difficulty);
+      const res = await mpRef.current.createRoom(playerName, size, difficulty, user?.id);
       if (!res.ok) {
         setErrorMsg(res.message);
         setScreen('menu');
@@ -189,7 +192,7 @@ export default function BinarySudokuPage() {
     setCopyStatus('');
     if (!mpRef.current) mpRef.current = new BinarySudokuMultiplayer();
     
-    const res = await mpRef.current.joinRoom(roomId, playerName);
+    const res = await mpRef.current.joinRoom(roomId, playerName, user?.id);
     if (!res.ok) {
         setErrorMsg(res.message);
         setScreen('browser');
@@ -379,6 +382,9 @@ export default function BinarySudokuPage() {
 
   return (
     <div className="bski-ui">
+      <div className="bs-brand-corner">
+        <img src={logoBlack} alt="Survive The Semester" className="bs-brand-logo" />
+      </div>
       {(() => {
         const shownInviteLink = inviteLink || deriveInviteLink();
 

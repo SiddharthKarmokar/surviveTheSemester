@@ -72,7 +72,7 @@ export const verifyUser = async (req, res, next) => {
         email,
         passwordHash: hashedPassword,
         friendlist: [],
-        rating: 0,
+        rating: 1000,
         HighScore: [],
         streak: 0,
         maxStreak: 0,

@@ -11,13 +11,13 @@ const GamesList = () => {
                 <div>FROM US</div>
             </div>
             <div id="list">
-                {[1, 2, 3, 4, 5, 6].map((num) => (
+                {["TOSIS","15 PUZZLE","CANON GAME","MATH WAR","BINARY SUDOKU"].map((name,num) => (
                     <div className={`game-item game-${num}`} key={num}>
                         <div id="item-number">
                             {num.toString().padStart(2, '0')}
                         </div>
                         <div id="game-name">
-                            Game {num}
+                            {name}
                         </div>
                     </div>
                 ))}

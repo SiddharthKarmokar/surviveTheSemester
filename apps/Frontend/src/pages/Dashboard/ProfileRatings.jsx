@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import './profileratings.css';
 
@@ -11,7 +11,33 @@ const ForwardIcon = () => (
 
 const ProfileRatings = () => {
     const user = useSelector((state) => state.user.currentUser);
-    const rating = user?.rating || user?.Rating || 1018;
+    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+    const fallbackRating = user?.rating || user?.Rating || 0;
+    const [rating, setRating] = useState(fallbackRating);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchRating = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/rating/stats`, {
+                    credentials: 'include'
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!cancelled && Number.isFinite(data?.overallRating)) {
+                    setRating(data.overallRating);
+                }
+            } catch {
+                // keep fallback rating
+            }
+        };
+
+        fetchRating();
+        return () => {
+            cancelled = true;
+        };
+    }, [API_URL]);
 
     return (
         <div className="profile-ratings-container">

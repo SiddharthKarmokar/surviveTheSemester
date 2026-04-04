@@ -8,9 +8,12 @@ const monthLabel = (date) =>
 const FIRE_LOTTIE_URL = 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/lottie.json';
 
 const StreakCalendar = () => {
+    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     const [currentTime, setCurrentTime] = useState(new Date());
     const [monthOffset, setMonthOffset] = useState(0);
     const [fireAnimation, setFireAnimation] = useState(null);
+    const [activeDays, setActiveDays] = useState([]);
+    const [currentStreak, setCurrentStreak] = useState(0);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -41,6 +44,34 @@ const StreakCalendar = () => {
         };
     }, []);
 
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchCalendar = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/rating/streak-calendar?monthOffset=${monthOffset}`, {
+                    credentials: 'include'
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!cancelled) {
+                    setActiveDays(Array.isArray(data?.activeDays) ? data.activeDays : []);
+                    setCurrentStreak(Number(data?.currentStreak || 0));
+                }
+            } catch {
+                if (!cancelled) {
+                    setActiveDays([]);
+                }
+            }
+        };
+
+        fetchCalendar();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [API_URL, monthOffset]);
+
     const endOfDay = new Date(currentTime);
     endOfDay.setHours(23, 59, 59, 999);
     const msLeft = endOfDay - currentTime;
@@ -57,18 +88,12 @@ const StreakCalendar = () => {
     const isCurrentMonth = monthOffset === 0;
     const today = currentTime.getDate();
 
+    const streakStart = Math.max(1, today - currentStreak + 1);
     const getStatusForDay = (day) => {
-        if (!isCurrentMonth) {
-            if (day === 3 || day === 10 || day === 18) return 'streak';
-            if (day === 7 || day === 21) return 'active';
-            if (day === 14) return 'missed';
-            return 'default';
-        }
-        if (day > today) return 'default';
-        if (day === today || day === today - 1 || day === today - 2) return 'streak';
-        if (day === 5 || day === 12) return 'missed';
-        if (day % 3 === 0) return 'active';
-        return 'default';
+        const played = activeDays.includes(day);
+        if (!played) return 'default';
+        if (isCurrentMonth && day >= streakStart && day <= today) return 'streak';
+        return 'active';
     };
 
     const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -86,7 +111,7 @@ const StreakCalendar = () => {
                     </div>
                     <div>
                     <p className="streak-kicker">Consistency</p>
-                    <h4 className="streak-title">3 day</h4>
+                    <h4 className="streak-title">{currentStreak} day</h4>
                     </div>
                 </div>
                 <span className="streak-timer">{timeLeftStr}</span>
@@ -125,7 +150,6 @@ const StreakCalendar = () => {
                             <div key={`day-${day}`} className="calendar-day-wrapper">
                                 <div className={`calendar-day day-${status}`}>
                                     {showFire ? '🔥' : day}
-                                    {status === 'missed' && <div className="day-missed-dot"></div>}
                                 </div>
                             </div>
                         );

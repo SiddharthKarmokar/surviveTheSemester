@@ -51,11 +51,15 @@
     border-radius: 22px;
 }
 
-#title p{
-    color: white;
-    font-size: 32px;
-    font-weight: bold;
-    font-family: "font1", "Segoe UI", Arial, sans-serif;
+#title{
+    display:flex;
+    align-items:center;
+}
+
+.navbar-logo{
+    display:block;
+    width: clamp(132px, 18vw, 188px);
+    height: auto;
 }
 
 #buttons{
@@ -184,12 +188,21 @@
     height:42px;
     border-radius:50%;
     background:#f0fd63;
+    border:1px solid #171717;
     color:#000;
     display:flex;
     align-items:center;
     justify-content:center;
     font-weight:700;
     font-family:"font1", "Segoe UI", Arial, sans-serif;
+    overflow:hidden;
+}
+
+.dashboard-profile-avatar-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
 }
 
 .dashboard-profile-copy{

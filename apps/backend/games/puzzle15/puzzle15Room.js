@@ -1,5 +1,6 @@
 import { Room } from "@colyseus/core";
 import { PuzzleGameState, PuzzlePlayer } from "./schema/PuzzleGameState.js";
+import { processGameResult } from "../../services/ratingUpdateService.js";
 
 // ---------------------------------------------------------------------------
 // Puzzle15Room — Colyseus room for the multiplayer 15-puzzle race
@@ -27,6 +28,10 @@ export class Puzzle15Room extends Room {
       creatorName: String(options.playerName || "Player").slice(0, 16),
     });
 
+    // Track user IDs for rating system
+    this.playerSessions = new Map(); // sessionId -> {userId, name}
+    this.gameStartTime = null;
+
     // Handle tile move messages from clients
     this.onMessage("move", (client, message) => {
       this.handleMove(client, message);
@@ -45,6 +50,12 @@ export class Puzzle15Room extends Room {
 
     this.state.players.set(client.sessionId, player);
 
+    // Store user ID for rating system
+    this.playerSessions.set(client.sessionId, {
+      userId: options.userId,
+      name: player.name,
+    });
+
     // Notify all clients about the new join
     this.broadcast("playerJoined", {
       name: player.name,
@@ -57,11 +68,13 @@ export class Puzzle15Room extends Room {
     if (this.state.players.size === 2) {
       this.state.phase = "countdown";
       this.state.countdownEndsAt = Date.now() + 3000;
+      this.gameStartTime = Date.now() + 3000; // Game starts after countdown
       this.broadcast("countdown", { endsAt: this.state.countdownEndsAt });
 
       this._countdownTimer = setTimeout(() => {
         if (this.state.phase === "countdown") {
           this.state.phase = "game";
+          this.gameStartTime = Date.now();
           this.broadcast("gameStart", {});
           console.log("[Puzzle15] Game started!");
         }
@@ -93,9 +106,17 @@ export class Puzzle15Room extends Room {
           reason: "opponent_left",
         });
         console.log(`[Puzzle15] ${winnerName} wins — opponent disconnected`);
+
+        // Process rating update
+        this._processGameEnd(winnerId, client.sessionId, {
+          moves: winner?.moves || 0,
+          timeTaken: this.gameStartTime ? Date.now() - this.gameStartTime : 0,
+          reason: "opponent_left",
+        });
       }
     }
 
+    this.playerSessions.delete(client.sessionId);
     this.state.players.delete(client.sessionId);
   }
 
@@ -105,7 +126,57 @@ export class Puzzle15Room extends Room {
   }
 
   // -------------------------------------------------------------------------
-  // Validate and apply a tile move for a specific client.
+  // Process game end: calculate scores and ratings, update database
+  // -------------------------------------------------------------------------
+  async _processGameEnd(winnerSessionId, loserSessionId, metadata = {}) {
+    try {
+      const winnerData = this.playerSessions.get(winnerSessionId);
+      const loserData = this.playerSessions.get(loserSessionId);
+
+      if (!winnerData?.userId || !loserData?.userId) {
+        console.warn("[Puzzle15] Missing user IDs for rating update");
+        return;
+      }
+
+      // Process rating update
+      const result = await processGameResult({
+        gameType: "puzzle15",
+        winnerId: winnerData.userId,
+        loserId: loserData.userId,
+        gameMetadata: metadata,
+      });
+
+      // Broadcast rating updates to clients
+      this.broadcast("ratingUpdate", {
+        winner: {
+          sessionId: winnerSessionId,
+          name: winnerData.name,
+          ...result.winner,
+        },
+        loser: {
+          sessionId: loserSessionId,
+          name: loserData.name,
+          ...result.loser,
+        },
+        gameResult: {
+          timestamp: result.gameResult.createdAt,
+          gameType: result.gameResult.gameType,
+        },
+      });
+
+      console.log(
+        `[Puzzle15] Ratings updated - Winner: ${result.winner.newRating}, Loser: ${result.loser.newRating}`
+      );
+    } catch (error) {
+      console.error("[Puzzle15] Error processing game end:", error);
+      // Notify clients of error
+      this.broadcast("ratingUpdateError", {
+        message: "Failed to update ratings",
+        error: error.message,
+      });
+    }
+  }
+
   // Message format: { tileIndex: number }  (0-15, the tile the player tapped)
   // -------------------------------------------------------------------------
   handleMove(client, message) {
@@ -151,6 +222,17 @@ export class Puzzle15Room extends Room {
         reason: "solved",
       });
       console.log(`[Puzzle15] ${player.name} solved the puzzle in ${player.moves} moves!`);
+
+      // Find loser
+      const loserId = [...this.state.players.keys()].find(id => id !== client.sessionId);
+      if (loserId) {
+        // Process game end and update ratings
+        this._processGameEnd(client.sessionId, loserId, {
+          moves: player.moves,
+          timeTaken: this.gameStartTime ? Date.now() - this.gameStartTime : 0,
+          reason: "solved",
+        });
+      }
     }
   }
 }

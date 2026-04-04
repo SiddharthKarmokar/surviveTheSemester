@@ -81,7 +81,7 @@ const Hero = () => {
         <div id="hero">
             <div id="hero-canvas" ref={canvasRef}></div>
             <div id="hero-text" ref={textRef}>
-                JOIN THE NEW ERA OF GAMING
+                YOUR CAMPUS. YOUR GAMES. YOUR CREW.
             </div>
         </div>
     );

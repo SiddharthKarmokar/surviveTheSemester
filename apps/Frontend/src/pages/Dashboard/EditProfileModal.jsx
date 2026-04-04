@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
 import './editprofilemodal.css';
 
-const avatars = [
-    'linear-gradient(135deg, #ff7e5f, #feb47b)',
-    'linear-gradient(135deg, #00c6ff, #0072ff)',
-    'linear-gradient(135deg, #11998e, #38ef7d)',
-    'linear-gradient(135deg, #8E2DE2, #4A00E0)',
-    'linear-gradient(135deg, #f12711, #f5af19)'
-];
+const avatarModules = import.meta.glob('../../assests/avatars/*.svg', { eager: true, import: 'default' });
+const avatarOptions = Object.entries(avatarModules)
+    .sort((a, b) => {
+        const aNum = Number(a[0].match(/(\d+)\.svg$/)?.[1] || 0);
+        const bNum = Number(b[0].match(/(\d+)\.svg$/)?.[1] || 0);
+        return aNum - bNum;
+    })
+    .map(([path, src]) => ({
+        id: path.match(/(\d+)\.svg$/)?.[1] || path,
+        src
+    }));
 
-const EditProfileModal = ({ isOpen, onClose, profileData, onSave }) => {
+const fillSwatches = ['#121212', '#FF4800', '#F0FD63', '#0F3B2E', '#1A2441', '#FAF4E0'];
+const strokeSwatches = ['#FFFFFF', '#FF4800', '#F0FD63', '#5BE584', '#6FA8FF', '#FAF4E0'];
+
+const EditProfileModal = ({ isOpen, onClose, profileData, profileName, onSave }) => {
     const [formData, setFormData] = useState(profileData || {});
 
-    if (!isOpen) return null;
+    React.useEffect(() => {
+        setFormData(profileData || {});
+    }, [profileData]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    if (!isOpen) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -27,45 +33,108 @@ const EditProfileModal = ({ isOpen, onClose, profileData, onSave }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h3 className="modal-title">Edit Profile</h3>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-head">
+                    <div>
+                        <p className="modal-eyebrow">Profile styling</p>
+                        <h3 className="modal-title">Edit Avatar</h3>
+                    </div>
+                    <button type="button" className="modal-close" onClick={onClose}>Close</button>
+                </div>
+
                 <form onSubmit={handleSubmit} className="modal-form">
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input type="text" name="name" value={formData.name || ''} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Username</label>
-                        <input type="text" name="handle" value={formData.handle || ''} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Friends Count</label>
-                        <input type="number" name="friends" value={formData.friends || 0} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Tag 1 (e.g., Add College)</label>
-                        <input type="text" name="tag1" value={formData.tag1 || ''} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Tag 2 (e.g., Add Socials)</label>
-                        <input type="text" name="tag2" value={formData.tag2 || ''} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Profile Avatar Style</label>
-                        <div className="avatar-selection">
-                            {avatars.map((gradient, index) => (
-                                <div 
-                                    key={index} 
-                                    className={`avatar-option ${formData.avatarGradient === gradient ? 'selected' : ''}`}
-                                    style={{ background: gradient }}
-                                    onClick={() => setFormData(prev => ({ ...prev, avatarGradient: gradient }))}
-                                ></div>
-                            ))}
+                    <div className="modal-scroll-area">
+                        <div className="avatar-modal-layout">
+                            <div className="avatar-preview-panel">
+                                <p className="avatar-panel-label">Live Preview</p>
+                                <div
+                                    className="avatar-preview-shell"
+                                    style={{
+                                        background: formData.fill || '#121212',
+                                        borderColor: formData.stroke || '#ffffff'
+                                    }}
+                                >
+                                    {formData.src && <img src={formData.src} alt={profileName || 'Profile avatar'} className="avatar-preview-image" />}
+                                </div>
+                                <p className="avatar-preview-name">{profileName || 'Player'}</p>
+                                <p className="avatar-preview-copy">Pick an avatar, then tune the fill and stroke colors.</p>
+                            </div>
+
+                            <div className="avatar-controls-panel">
+                                <div className="form-group">
+                                    <label>Avatar Library</label>
+                                    <div className="avatar-selection-grid">
+                                        {avatarOptions.map((avatar) => (
+                                            <button
+                                                key={avatar.id}
+                                                type="button"
+                                                className={`avatar-option ${formData.src === avatar.src ? 'selected' : ''}`}
+                                                onClick={() => setFormData((prev) => ({ ...prev, src: avatar.src }))}
+                                                style={{
+                                                    background: formData.fill || '#121212',
+                                                    borderColor: formData.src === avatar.src ? (formData.stroke || '#ffffff') : '#242424'
+                                                }}
+                                            >
+                                                <img src={avatar.src} alt={`Avatar ${avatar.id}`} className="avatar-option-image" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Fill Color</label>
+                                    <div className="color-row">
+                                        <input
+                                            type="color"
+                                            value={formData.fill || '#121212'}
+                                            onChange={(e) => setFormData((prev) => ({ ...prev, fill: e.target.value }))}
+                                            className="color-picker"
+                                        />
+                                        <span className="color-value">{formData.fill || '#121212'}</span>
+                                    </div>
+                                    <div className="color-swatches">
+                                        {fillSwatches.map((color) => (
+                                            <button
+                                                key={color}
+                                                type="button"
+                                                className={`color-swatch ${formData.fill === color ? 'selected' : ''}`}
+                                                style={{ background: color }}
+                                                onClick={() => setFormData((prev) => ({ ...prev, fill: color }))}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Stroke Color</label>
+                                    <div className="color-row">
+                                        <input
+                                            type="color"
+                                            value={formData.stroke || '#ffffff'}
+                                            onChange={(e) => setFormData((prev) => ({ ...prev, stroke: e.target.value }))}
+                                            className="color-picker"
+                                        />
+                                        <span className="color-value">{formData.stroke || '#ffffff'}</span>
+                                    </div>
+                                    <div className="color-swatches">
+                                        {strokeSwatches.map((color) => (
+                                            <button
+                                                key={color}
+                                                type="button"
+                                                className={`color-swatch ${formData.stroke === color ? 'selected' : ''}`}
+                                                style={{ background: color }}
+                                                onClick={() => setFormData((prev) => ({ ...prev, stroke: color }))}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                     <div className="modal-actions">
                         <button type="button" className="modal-btn-cancel" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="modal-btn-save">Save changes</button>
+                        <button type="submit" className="modal-btn-save">Save Avatar</button>
                     </div>
                 </form>
             </div>

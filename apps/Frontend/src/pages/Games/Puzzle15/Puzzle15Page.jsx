@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../../store/userSlice';
 import { Client } from 'colyseus.js';
 import './puzzle15.css';
+import logoBlack from '../../../assests/logos/logo_black.svg';
 
 const BACKEND_URL = import.meta.env.VITE_TWO_PLAYER_GAME_URL || 'http://localhost:3000';
 const WS_URL = BACKEND_URL.replace(/^http/, 'ws');
@@ -63,7 +65,9 @@ async function requestSeatReservation(method, idOrRoomName, payload) {
 }
 
 export default function Puzzle15Page() {
+  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
+  const userId = currentUser?.id || null;
   const playerName = String(currentUser?.name || currentUser?.username || 'Player').slice(0, 16);
   const [screen, setScreen] = useState('lobby');
   const clientRef = useRef(null);
@@ -93,6 +97,35 @@ export default function Puzzle15Page() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (currentUser?.id) return;
+
+    let cancelled = false;
+    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+
+    const hydrateUser = async () => {
+      try {
+        const res = await fetch(`${API_URL}/auth/me`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (!cancelled && data?.user) {
+          dispatch(setUser(data.user));
+        }
+      } catch {
+        // Ignore here; game can still run as guest if auth is unavailable.
+      }
+    };
+
+    hydrateUser();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser?.id, dispatch]);
 
   const attachRoomListeners = useCallback((room) => {
     room.onStateChange((state) => {
@@ -172,7 +205,10 @@ export default function Puzzle15Page() {
   const createRoom = async () => {
     try {
       setError('');
-      const room = await clientRef.current.joinOrCreate('puzzle15', { playerName });
+      const room = await clientRef.current.joinOrCreate('puzzle15', {
+        playerName,
+        userId,
+      });
       roomRef.current = room;
       const roomId = room.roomId;
       setInviteLink(`${window.location.origin}/puzzle?roomId=${roomId}`);
@@ -220,7 +256,10 @@ export default function Puzzle15Page() {
     try {
       setError('');
       setScreen('joining');
-      const reservation = await requestSeatReservation('joinById', roomId, { playerName });
+      const reservation = await requestSeatReservation('joinById', roomId, {
+        playerName,
+        userId,
+      });
       const room = await clientRef.current.consumeSeatReservation(reservation);
       roomRef.current = room;
       attachRoomListeners(room);
@@ -234,7 +273,10 @@ export default function Puzzle15Page() {
     try {
       setError('');
       setScreen('joining');
-      const reservation = await requestSeatReservation('joinById', roomId, { playerName });
+      const reservation = await requestSeatReservation('joinById', roomId, {
+        playerName,
+        userId,
+      });
       const room = await clientRef.current.consumeSeatReservation(reservation);
       roomRef.current = room;
       attachRoomListeners(room);
@@ -295,6 +337,9 @@ export default function Puzzle15Page() {
   if (screen === 'lobby') {
     return (
       <div className="p15-page">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <button className="p15-back" onClick={goToDashboard}>Back to Dashboard</button>
         <div className="p15-card p15-lobby">
           <p className="p15-eyebrow">Puzzle sprint</p>
@@ -317,6 +362,9 @@ export default function Puzzle15Page() {
   if (screen === 'waiting') {
     return (
       <div className="p15-page">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <button className="p15-back" onClick={goToDashboard}>Back to Dashboard</button>
         <div className="p15-card p15-waiting">
           <div className="p15-spinner" />
@@ -339,6 +387,9 @@ export default function Puzzle15Page() {
   if (screen === 'browsing') {
     return (
       <div className="p15-page">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <button className="p15-back" onClick={() => setScreen('lobby')}>Back</button>
         <div className="p15-card p15-browse">
           <p className="p15-eyebrow">Open matches</p>
@@ -368,6 +419,9 @@ export default function Puzzle15Page() {
   if (screen === 'joining') {
     return (
       <div className="p15-page">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <div className="p15-card p15-waiting">
           <div className="p15-spinner" />
           <p className="p15-eyebrow">Jumping in</p>
@@ -380,6 +434,9 @@ export default function Puzzle15Page() {
   if (screen === 'countdown') {
     return (
       <div className="p15-page">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <div className="p15-card p15-countdown-card">
           <p className="p15-countdown-label">Get Ready!</p>
           <div className="p15-countdown-number">{countdown || 'GO!'}</div>
@@ -395,6 +452,9 @@ export default function Puzzle15Page() {
 
     return (
       <div className="p15-page p15-page--game">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <div className="p15-game-layout">
           <div className="p15-player-panel">
             <div className="p15-player-header">
@@ -433,6 +493,9 @@ export default function Puzzle15Page() {
     const { winnerName, moves, reason, isMe } = endData || {};
     return (
       <div className="p15-page">
+        <div className="p15-brand-corner">
+          <img src={logoBlack} alt="Survive The Semester" className="p15-brand-logo" />
+        </div>
         <div className="p15-card p15-ended">
           <div className={`p15-winner-badge ${isMe ? 'p15-winner-badge--win' : 'p15-winner-badge--lose'}`}>
             {isMe ? 'You Win!' : 'You Lose'}

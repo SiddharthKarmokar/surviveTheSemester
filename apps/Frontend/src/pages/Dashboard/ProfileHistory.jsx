@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import './profilehistory.css';
 
 const ForwardIcon = () => (
@@ -9,40 +10,106 @@ const ForwardIcon = () => (
 );
 
 const filters = [
-    { id: 'two-player', label: 'Two Player Arena' },
+    { id: 'all', label: 'All Games' },
+    { id: 'campusFighter', label: 'Two Player Arena' },
     { id: 'puzzle15', label: '15 Puzzle' },
     { id: 'canon', label: 'Canon Game' },
-    { id: 'math-tug', label: 'Math Tug-of-War' },
-    { id: 'binary-sudoku', label: 'Binary Sudoku' }
+    { id: 'mathTug', label: 'Math Tug-of-War' },
+    { id: 'binarySudoku', label: 'Binary Sudoku' }
 ];
 
-const matchesData = [
-    {
-        id: 1,
-        opponent: 'prob',
-        opponentScore: 1118,
-        date: '30 Jan, 11:04 AM',
-        mode: 'Math Tug-of-War',
-        myMatchScore: 19,
-        oppMatchScore: 28,
-        ratingDiff: -5,
-        avatarInitial: 'P'
-    },
-    {
-        id: 2,
-        opponent: 'guest640233',
-        opponentScore: 1072,
-        date: '12 Jan, 08:30 AM',
-        mode: 'Binary Sudoku',
-        myMatchScore: 21,
-        oppMatchScore: 10,
-        ratingDiff: 13,
-        avatarImg: 'D'
-    }
-];
+const GAME_LABELS = {
+    campusFighter: 'Two Player Arena',
+    puzzle15: '15 Puzzle',
+    canon: 'Canon Game',
+    mathTug: 'Math Tug-of-War',
+    binarySudoku: 'Binary Sudoku'
+};
+
+const formatDate = (value) => {
+    if (!value) return '-';
+    const date = new Date(value);
+    return date.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+};
 
 const ProfileHistory = () => {
-    const [activeFilter, setActiveFilter] = useState('two-player');
+    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+    const user = useSelector((state) => state.user.currentUser);
+    const [activeFilter, setActiveFilter] = useState('all');
+    const [matchesData, setMatchesData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchHistory = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const gameTypeParam = activeFilter === 'all' ? '' : `&gameType=${encodeURIComponent(activeFilter)}`;
+                const response = await fetch(`${API_URL}/api/rating/history?limit=20${gameTypeParam}`, {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch game history');
+                }
+
+                const payload = await response.json();
+                const history = Array.isArray(payload?.history) ? payload.history : [];
+
+                const mapped = history.map((match, index) => {
+                    const isWinner = match.winnerId === user?.id;
+                    const opponent = isWinner ? match.loser : match.winner;
+                    const opponentName = opponent?.name || 'Opponent';
+
+                    return {
+                        id: match.id || index,
+                        opponent: opponentName,
+                        opponentScore: 0,
+                        date: formatDate(match.createdAt),
+                        mode: GAME_LABELS[match.gameType] || match.gameType,
+                        myMatchScore: isWinner ? Number(match.winnerScore || 0) : Number(match.loserScore || 0),
+                        oppMatchScore: isWinner ? Number(match.loserScore || 0) : Number(match.winnerScore || 0),
+                        ratingDiff: isWinner ? Number(match.windScore || 0) : Number(match.loserRating || 0),
+                        avatarInitial: opponentName.charAt(0).toUpperCase()
+                    };
+                });
+
+                if (!cancelled) {
+                    setMatchesData(mapped);
+                }
+            } catch (err) {
+                if (!cancelled) {
+                    setError(err?.message || 'Failed to load history');
+                    setMatchesData([]);
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchHistory();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [API_URL, activeFilter, user?.id]);
+
+    const statusText = useMemo(() => {
+        if (loading) return 'Loading game history...';
+        if (error) return error;
+        if (matchesData.length === 0) return 'No games found yet. Play a match to start your history.';
+        return '';
+    }, [loading, error, matchesData.length]);
 
     return (
         <div className="profile-history-container">
@@ -66,6 +133,7 @@ const ProfileHistory = () => {
             </div>
 
             <div className="profile-matches-list">
+                {statusText && <p className="profile-match-empty">{statusText}</p>}
                 {matchesData.map((match) => {
                     const isWin = match.myMatchScore > match.oppMatchScore;
                     return (

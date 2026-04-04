@@ -1,11 +1,14 @@
 import { Room } from "@colyseus/core";
 import { GameState } from "../state/FighterState.js";
 import { Constants, Maths } from "../src/index.js";
+import { recordGameCompletionActivity } from "../../../services/ratingUpdateService.js";
 
 export class fighterGameRoom extends Room {
     onCreate(options) {
         try {
             console.log("fighterGameRoom created:", options);
+            this.playerSessions = new Map();
+            this.completionRecorded = false;
             
             // 2. CHANGE gameConstants TO Constants
             this.maxClients = Maths.clamp(
@@ -65,6 +68,10 @@ export class fighterGameRoom extends Room {
 
     onJoin(client, options) {
         this.state.playerAdd(client.sessionId, options.playerName);
+        this.playerSessions.set(client.sessionId, {
+            userId: options.userId || null,
+            name: options.playerName || "Player",
+        });
         this.broadcast("playersStatus", {
             count: this.state.players.size,
             maxCount: this.maxClients,
@@ -76,6 +83,7 @@ export class fighterGameRoom extends Room {
 
     onLeave(client) {
         this.state.playerRemove(client.sessionId);
+        this.playerSessions.delete(client.sessionId);
         this.broadcast("playersStatus", {
             count: this.state.players.size,
             maxCount: this.maxClients,
@@ -90,6 +98,25 @@ export class fighterGameRoom extends Room {
     };
 
     handleMessage = (message) => {
+        if (message?.type === "start") {
+            this.completionRecorded = false;
+        }
+
+        if (message?.type === "won" && !this.completionRecorded) {
+            this.completionRecorded = true;
+            const userIds = [...new Set(
+                Array.from(this.playerSessions.values())
+                    .map((player) => player.userId)
+                    .filter(Boolean)
+            )];
+
+            if (userIds.length > 0) {
+                void recordGameCompletionActivity(userIds, new Date(message.ts || Date.now())).catch((error) => {
+                    console.error("[CampusFighter] Failed to record streak activity:", error);
+                });
+            }
+        }
+
         this.broadcast(message.type, message);
     };
 }

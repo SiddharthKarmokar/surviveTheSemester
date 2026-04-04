@@ -85,13 +85,13 @@ const About = () => {
         <div id="about">
             <div className="about-container" ref={containerRef}>
                 <div className="about-title" ref={titleRef}>
-                    Defining the <br /> next generation <br /> <b>of gaming.</b>
+                    Built for<br />students who game<br /> <b>between deadlines.</b>
                 </div>
 
                 <div className="story-img-container">
                     <div className="story-img-mask">
                         <div className="story-img-content" ref={frameRef}>
-                            <img src="/assests/wonderland.webp" alt="Wonderland Image" className="object-contain" />
+                            <img src="/banner.jpg" alt="Wonderland Image" className="object-contain" />
                         </div>
                     </div>
                 </div>

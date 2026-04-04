@@ -1,9 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { CannonDuelGame } from './game.js';
 import { MultiplayerClient } from './multiplayer.js';
 import './style.css'; // The ported canon_game CSS
+import logoCanon from '../../../assests/logos/logo_canon.svg';
 
 export default function CanonGamePage() {
+  const user = useSelector((state) => state.user.currentUser);
   const canvasRef = useRef(null);
   const initialized = useRef(false);
 
@@ -71,7 +74,7 @@ export default function CanonGamePage() {
     const urlRoomId = params.get('roomId');
     if (urlRoomId) {
        setScreen("joining");
-       mp.joinRoom(urlRoomId).then(res => {
+      mp.joinRoom(urlRoomId, user?.id).then(res => {
          if (res.ok) {
            setRoomId(res.roomId);
            g.roomId = res.roomId;
@@ -102,7 +105,7 @@ export default function CanonGamePage() {
 
   const createRoom = async () => {
     setScreen("creating");
-    const res = await multiplayer.createRoom(onlineTarget, onlineTheme);
+    const res = await multiplayer.createRoom(onlineTarget, onlineTheme, user?.id);
     if (res.ok) {
       setRoomId(res.roomId);
       game.roomId = res.roomId;
@@ -120,7 +123,7 @@ export default function CanonGamePage() {
   const submitJoin = async () => {
     if (!joinCode) return;
     setScreen("joining");
-    const res = await multiplayer.joinRoom(joinCode);
+    const res = await multiplayer.joinRoom(joinCode, user?.id);
     if (res.ok) {
       setRoomId(res.roomId);
       game.roomId = res.roomId;
@@ -150,6 +153,9 @@ export default function CanonGamePage() {
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#000' }}>
+      <div className="canon-brand-corner">
+        <img src={logoCanon} alt="Canon Game" className="canon-brand-logo" />
+      </div>
       <canvas ref={canvasRef} style={{ display: 'block' }}></canvas>
 
       {/* Menus Overlay */}

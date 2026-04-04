@@ -205,18 +205,18 @@ export class BinarySudokuMultiplayer {
     });
   }
 
-  async createRoom(playerName, size, difficulty) {
-    const r = await this.connectRoom({ playerName, size, difficulty, clientId: this.clientId }, "create");
+  async createRoom(playerName, size, difficulty, userId) {
+    const r = await this.connectRoom({ playerName, size, difficulty, clientId: this.clientId, userId }, "create");
     if (!r.ok) return { ok: false, message: r.error };
     return { ok: true, roomId: r.roomId };
   }
 
-  async joinRoom(roomId, playerName) {
+  async joinRoom(roomId, playerName, userId) {
     if (this.joinInFlight) {
       return this.joinInFlight;
     }
 
-    this.joinInFlight = this.performJoinRoom(roomId, playerName);
+    this.joinInFlight = this.performJoinRoom(roomId, playerName, userId);
     try {
       return await this.joinInFlight;
     } finally {
@@ -224,10 +224,10 @@ export class BinarySudokuMultiplayer {
     }
   }
 
-  async performJoinRoom(roomId, playerName) {
+  async performJoinRoom(roomId, playerName, userId) {
     const MAX_JOIN_ATTEMPTS = 5;
     for (let attempt = 1; attempt <= MAX_JOIN_ATTEMPTS; attempt++) {
-      const r = await this.connectRoom({ roomId, playerName, clientId: this.clientId }, "join");
+      const r = await this.connectRoom({ roomId, playerName, clientId: this.clientId, userId }, "join");
       if (r.ok) return { ok: true, roomId: r.roomId };
 
       const message = String(r.error || "").toLowerCase();
