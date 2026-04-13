@@ -6,7 +6,7 @@ import './puzzle15.css';
 import logoBlack from '../../../assests/logos/logo_black.svg';
 
 const BACKEND_URL = import.meta.env.VITE_TWO_PLAYER_GAME_URL || 'http://localhost:3000';
-const WS_URL = BACKEND_URL.replace(/^http/, 'ws');
+const WS_URL = BACKEND_URL.replace(/^https/, 'wss');
 const SOLVED = [...Array(15).keys()].map((i) => i + 1).concat(0);
 
 function calcProgress(tiles) {
