@@ -43,3 +43,8 @@
     object-fit: contain;
     display: block;
 }
+
+.profile-achievement-badge.is-locked {
+    opacity: 0.42;
+    filter: grayscale(1);
+}

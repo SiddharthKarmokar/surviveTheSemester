@@ -12,9 +12,9 @@ const ForwardIcon = () => (
 );
 
 const achievementsData = [
-    { id: 'first', label: 'First win', image: firstBadge },
-    { id: '7day', label: '7 day streak', image: sevenDayBadge },
-    { id: '30day', label: '30 day streak', image: thirtyDayBadge },
+    { id: 'first', label: 'First win', image: firstBadge, locked: false },
+    { id: '7day', label: '7 day streak', image: sevenDayBadge, locked: true },
+    { id: '30day', label: '30 day streak', image: thirtyDayBadge, locked: true },
 ];
 
 const ProfileAchievements = () => {
@@ -29,7 +29,7 @@ const ProfileAchievements = () => {
 
             <div className="profile-achievements-list">
                 {achievementsData.map((badge) => (
-                    <div key={badge.id} className="profile-achievement-badge">
+                    <div key={badge.id} className={`profile-achievement-badge ${badge.locked ? 'is-locked' : ''}`}>
                         <img src={badge.image} alt={badge.label} className="profile-achievement-image" />
                     </div>
                 ))}

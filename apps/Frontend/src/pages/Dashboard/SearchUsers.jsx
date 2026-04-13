@@ -34,31 +34,38 @@ const SearchUsers = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        let cancelled = false;
+
         const timeoutId = setTimeout(async () => {
-            if (searchQuery.trim() !== '') {
-                setIsLoading(true);
-                try {
-                    const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(searchQuery)}`, {
-                        credentials: 'include'
-                    });
-                    const data = await response.json();
+            setIsLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(searchQuery)}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (!cancelled) {
                     if (data.results) {
                         setResults(data.results);
                     } else {
                         setResults([]);
                     }
-                } catch (error) {
-                    console.error('Error fetching search results:', error);
+                }
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+                if (!cancelled) {
                     setResults([]);
-                } finally {
+                }
+            } finally {
+                if (!cancelled) {
                     setIsLoading(false);
                 }
-            } else {
-                setResults([]);
             }
         }, 300);
 
-        return () => clearTimeout(timeoutId);
+        return () => {
+            cancelled = true;
+            clearTimeout(timeoutId);
+        };
     }, [searchQuery]);
 
     const handleRequest = async (id) => {
@@ -181,14 +188,9 @@ const SearchUsers = () => {
                         </div>
                     );
                 })}
-                {!isLoading && searchQuery.trim() !== '' && filteredUsers.length === 0 && (
+                {!isLoading && filteredUsers.length === 0 && (
                     <div style={{ color: 'var(--md-sys-color-on-surface-variant)', padding: '24px', textAlign: 'center' }}>
-                        No users found matching your search.
-                    </div>
-                )}
-                {!isLoading && searchQuery.trim() === '' && (
-                    <div style={{ color: 'var(--md-sys-color-on-surface-variant)', padding: '24px', textAlign: 'center' }}>
-                        Type a name or email to search.
+                        {searchQuery.trim() === '' ? 'No users available right now.' : 'No users found matching your search.'}
                     </div>
                 )}
             </div>

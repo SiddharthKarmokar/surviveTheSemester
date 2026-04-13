@@ -16,22 +16,32 @@ export const performUserSearch = async (currentUserId, searchQuery) => {
   const currentUserSentRequests = currentUser.sentRequests;
   const currentUserReceivedRequests = currentUser.receivedRequests;
 
-  const sanitizedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const normalizedQuery = typeof searchQuery === 'string' ? searchQuery.trim() : '';
+  const sanitizedQuery = normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regexPattern = `^${sanitizedQuery}`;
   const matchConditions = [];
-  matchConditions.push({ name: { $regex: regexPattern, $options: "i" } });
-  
-  if (searchQuery.includes('@')) {
-    matchConditions.push({ email: { $regex: regexPattern, $options: "i" } });
+
+  if (normalizedQuery) {
+    matchConditions.push({ name: { $regex: regexPattern, $options: "i" } });
+
+    if (normalizedQuery.includes('@')) {
+      matchConditions.push({ email: { $regex: regexPattern, $options: "i" } });
+    }
   }
+
+  const matchStage = normalizedQuery
+    ? {
+        _id: { $nin: excludeIds },
+        $or: matchConditions
+      }
+    : {
+        _id: { $nin: excludeIds }
+      };
 
   const rawResults = await prisma.users.aggregateRaw({
     pipeline: [
       {
-        $match: {
-          _id: { $nin: excludeIds },
-          $or: matchConditions
-        }
+        $match: matchStage
       },
       {
         $addFields: {

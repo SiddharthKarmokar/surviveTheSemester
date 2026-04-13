@@ -4,11 +4,8 @@ export const searchUsers = async (req, res, next) => {
   try {
     const { q } = req.query;
     const currentUserId = req.user.id;
-
-    if (!q || typeof q !== 'string' || q.trim() === '') {
-      return res.status(200).json({ results: [] });
-    }
-    const searchResults = await performUserSearch(currentUserId, q.trim());
+    const normalizedQuery = typeof q === 'string' ? q.trim() : '';
+    const searchResults = await performUserSearch(currentUserId, normalizedQuery);
 
     res.status(200).json({ results: searchResults });
   } catch (error) {

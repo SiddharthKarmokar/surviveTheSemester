@@ -15,6 +15,19 @@ const StreakCalendar = () => {
     const [activeDays, setActiveDays] = useState([]);
     const [currentStreak, setCurrentStreak] = useState(0);
 
+    const fetchCalendar = async (offset, onSuccess, onFailure) => {
+        try {
+            const response = await fetch(`${API_URL}/api/rating/streak-calendar?monthOffset=${offset}`, {
+                credentials: 'include'
+            });
+            if (!response.ok) return;
+            const data = await response.json();
+            onSuccess(data);
+        } catch {
+            onFailure?.();
+        }
+    };
+
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
@@ -47,28 +60,39 @@ const StreakCalendar = () => {
     useEffect(() => {
         let cancelled = false;
 
-        const fetchCalendar = async () => {
-            try {
-                const response = await fetch(`${API_URL}/api/rating/streak-calendar?monthOffset=${monthOffset}`, {
-                    credentials: 'include'
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                if (!cancelled) {
-                    setActiveDays(Array.isArray(data?.activeDays) ? data.activeDays : []);
-                    setCurrentStreak(Number(data?.currentStreak || 0));
+        const refreshCalendar = () => {
+            fetchCalendar(
+                monthOffset,
+                (data) => {
+                    if (!cancelled) {
+                        setActiveDays(Array.isArray(data?.activeDays) ? data.activeDays : []);
+                        setCurrentStreak(Number(data?.currentStreak || 0));
+                    }
+                },
+                () => {
+                    if (!cancelled) {
+                        setActiveDays([]);
+                    }
                 }
-            } catch {
-                if (!cancelled) {
-                    setActiveDays([]);
-                }
+            );
+        };
+
+        const handleVisibilityRefresh = () => {
+            if (document.visibilityState === 'visible') {
+                refreshCalendar();
             }
         };
 
-        fetchCalendar();
+        refreshCalendar();
+        const intervalId = window.setInterval(refreshCalendar, 5000);
+        window.addEventListener('focus', refreshCalendar);
+        document.addEventListener('visibilitychange', handleVisibilityRefresh);
 
         return () => {
             cancelled = true;
+            window.clearInterval(intervalId);
+            window.removeEventListener('focus', refreshCalendar);
+            document.removeEventListener('visibilitychange', handleVisibilityRefresh);
         };
     }, [API_URL, monthOffset]);
 
